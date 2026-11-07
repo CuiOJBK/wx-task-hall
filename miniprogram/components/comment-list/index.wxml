@@ -1,0 +1,29 @@
+<view class="comment-list">
+  <view class="empty" wx:if="{{list.length === 0}}">{{emptyText}}</view>
+
+  <view class="comment-item" wx:for="{{list}}" wx:key="_id">
+    <view class="avatar">{{item.nicknameFirst || '匿'}}</view>
+
+    <view class="body">
+      <view class="row">
+        <text class="nickname">{{item.nickname || '匿名用户'}}</text>
+        <text class="muted">{{item.timeText}}</text>
+      </view>
+
+      <text class="content">{{item.content}}</text>
+
+      <view class="actions">
+        <text class="reply-btn" data-item="{{item}}" bindtap="onReply">回复</text>
+      </view>
+
+      <!-- 二级回复：只渲染一层，不递归，避免无限嵌套 -->
+      <view class="children" wx:if="{{item.children.length > 0}}">
+        <view class="child" wx:for="{{item.children}}" wx:for-item="child" wx:key="_id">
+          <text class="child-nick">{{child.nickname || '匿名用户'}}</text>
+          <text class="child-content">{{child.content}}</text>
+          <text class="muted child-time">{{child.timeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,50 @@
+<view
+  class="composer {{showEmoji ? 'panel-open' : ''}} {{keyboardHeight > 0 ? 'kb-open' : ''}}"
+  style="bottom: {{keyboardHeight}}px;"
+>
+  <!-- 回复提示 -->
+  <view class="reply-tip" wx:if="{{replyTo}}">
+    <text>回复 {{replyTo.nickname}}</text>
+    <text class="reply-cancel" bindtap="onCancelReply">取消</text>
+  </view>
+
+  <!-- 输入行 -->
+  <view class="bar">
+    <input
+      class="input"
+      value="{{innerValue}}"
+      focus="{{focus}}"
+      maxlength="{{maxlength}}"
+      placeholder="{{replyTo ? '回复 ' + replyTo.nickname : placeholder}}"
+      placeholder-class="input-placeholder"
+      confirm-type="send"
+      confirm-hold
+      adjust-position="{{false}}"
+      bindinput="onInput"
+      bindtap="onInputTap"
+      bindfocus="onFocus"
+      bindblur="onBlur"
+      bindconfirm="onSend"
+      bindkeyboardheightchange="onKeyboardHeightChange"
+    />
+
+    <!-- touchstart 早于「点击输入框外部导致的失焦」，是唯一能稳定读到真实光标的时机 -->
+    <view
+      class="icon-btn"
+      bindtouchstart="onEmojiTouchStart"
+      bindtap="onToggleEmoji"
+      hover-class="icon-hover"
+    >
+      <text class="icon">{{showEmoji ? '⌨' : '😀'}}</text>
+    </view>
+
+    <view class="send-btn {{sending ? 'send-disabled' : ''}}" bindtap="onSend">发送</view>
+  </view>
+
+  <!-- 表情面板：收起时用 wx:if 卸载，避免常驻渲染 -->
+  <emoji-panel
+    wx:if="{{showEmoji}}"
+    bind:select="onPickEmoji"
+    bind:delete="onDeleteEmoji"
+  />
+</view>

@@ -1,0 +1,21 @@
+# 微信开发者工具本地私有配置（含个人设置），不入库
+project.private.config.json
+
+# 依赖
+node_modules/
+cloudfunctions/**/node_modules/
+
+# 构建产物 / 预览二维码（每次 cli preview 都会重新生成）
+preview-qr.png
+miniprogram_npm/
+
+# 编辑器与系统
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# 日志与临时文件
+*.log
+*.tmp

@@ -1,0 +1,59 @@
+<view class="page">
+  <!-- 匿名引导条（E1） -->
+  <view class="login-bar" wx:if="{{anonymous}}">
+    <view class="login-bar-text">
+      <text class="login-bar-title">登录后可查看任务详情、发布和接单</text>
+      <text class="login-bar-sub">当前仅展示最新 10 条任务摘要</text>
+    </view>
+    <view class="login-bar-btn" bindtap="onLoginTap">微信一键登录</view>
+  </view>
+
+  <!-- 顶部状态切换 -->
+  <view class="tabs">
+    <view
+      class="tab {{activeStatus === item.key ? 'tab-active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="onSwitchTab"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="loc-hint muted" wx:if="{{anonymous}}">登录后可筛选任务、查看全部记录</view>
+  <block wx:else>
+    <view class="loc-hint muted" wx:if="{{locating}}">正在获取位置，用于按距离排序…</view>
+    <view class="loc-hint muted" wx:elif="{{center}}">已按当前位置优先排序</view>
+    <view class="loc-hint muted" wx:else>未获取位置，按发布时间排序</view>
+  </block>
+
+  <!-- 未登录/云环境异常提示 -->
+  <view class="warn" wx:if="{{loginError}}">
+    <text>{{loginError}}</text>
+    <text class="warn-tip">请检查云开发是否开通、云函数是否已部署</text>
+  </view>
+
+  <!-- 任务列表 -->
+  <task-card
+    wx:for="{{list}}"
+    wx:key="_id"
+    task="{{item}}"
+    bind:select="onTapTask"
+  />
+
+  <!-- 状态位 -->
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">
+    这里还没有任务，点右下角发布一个
+  </view>
+  <view class="empty" wx:if="{{loading}}">加载中…</view>
+  <view class="login-more" wx:if="{{anonymous && list.length > 0}}" bindtap="onLoginTap">
+    登录后可查看全部任务与详情 ›
+  </view>
+  <view class="empty" wx:elif="{{finished && list.length > 0}}">没有更多了</view>
+
+  <!-- 发布按钮 -->
+  <view class="fab" bindtap="onPublish">
+    <text class="fab-plus">＋</text>
+  </view>
+</view>

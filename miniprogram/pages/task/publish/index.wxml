@@ -1,0 +1,69 @@
+<view class="page">
+  <view class="card">
+    <view class="field">
+      <text class="label">任务标题<text class="req">*</text></text>
+      <input
+        class="input"
+        placeholder="例如：帮取一个快递到 3 号楼"
+        maxlength="40"
+        value="{{title}}"
+        data-field="title"
+        bindinput="onInput"
+      />
+    </view>
+
+    <view class="field">
+      <text class="label">任务描述</text>
+      <textarea
+        class="textarea"
+        placeholder="说清楚要做什么、有什么要求、什么时候要"
+        maxlength="500"
+        value="{{desc}}"
+        data-field="desc"
+        bindinput="onInput"
+      />
+    </view>
+
+    <view class="field">
+      <text class="label">赏金（元）</text>
+      <input
+        class="input"
+        type="digit"
+        placeholder="0 表示非悬赏任务"
+        value="{{reward}}"
+        data-field="reward"
+        bindinput="onInput"
+      />
+    </view>
+
+    <view class="field">
+      <text class="label">联系方式</text>
+      <input
+        class="input"
+        placeholder="微信号 / 手机号，接单后可见"
+        maxlength="40"
+        value="{{contact}}"
+        data-field="contact"
+        bindinput="onInput"
+      />
+    </view>
+
+    <!-- 定位：核心需求之一，选点结果随任务一起落库 -->
+    <view class="field" wx:if="{{mapEnabled}}">
+      <text class="label">任务地点</text>
+      <view class="loc-row" bindtap="onChooseLocation">
+        <text class="loc-text {{locationText ? '' : 'loc-placeholder'}}">
+          {{locationText || '点击在地图上选择任务地点'}}
+        </text>
+        <text class="loc-clear" wx:if="{{locationText}}" catchtap="onClearLocation">清除</text>
+      </view>
+      <text class="muted loc-tip">选点后，大厅可按距离由近到远查看</text>
+    </view>
+  </view>
+
+  <button class="btn btn-primary submit" bindtap="onSubmit" disabled="{{submitting}}">
+    {{submitting ? '发布中…' : '发布任务'}}
+  </button>
+
+  <view class="tip muted">发布后任务进入「待接单」，其他人可在任务大厅接单</view>
+</view>

@@ -1,0 +1,47 @@
+<view class="page">
+  <!-- 未登录引导 -->
+  <view class="card login-guide" wx:if="{{needLogin}}">
+    <text class="title">登录后才能进入大厅交流</text>
+    <text class="desc guide-desc">确认身份后即可查看话题、参与讨论。</text>
+    <button class="btn btn-primary guide-btn" bindtap="onLoginTap">微信一键登录</button>
+  </view>
+
+  <block wx:else>
+    <view class="card community-head">
+      <text class="title">大厅交流区</text>
+      <text class="muted head-desc">任务之外的闲聊、经验、求组队，都可以发在这里</text>
+    </view>
+
+    <view
+      class="card post"
+      wx:for="{{list}}"
+      wx:key="_id"
+      data-id="{{item._id}}"
+      bindtap="onTapPost"
+    >
+      <view class="row">
+        <text class="post-nick">{{item.nickname || '匿名用户'}}</text>
+        <text class="muted">{{item.timeText}}</text>
+      </view>
+      <text class="post-content">{{item.contentText}}</text>
+      <view class="post-foot">
+        <text class="muted">💬 {{item.replyCount || 0}} 条回复</text>
+        <view
+          class="like {{item.liked ? 'like-on' : ''}}"
+          data-id="{{item._id}}"
+          data-index="{{index}}"
+          catchtap="onTapLike"
+        >
+          <text class="like-icon">{{item.liked ? '❤️' : '🤍'}}</text>
+          <text class="like-num">{{item.likeCount || 0}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{!loading && list.length === 0}}">还没有人发言，来开个头</view>
+    <view class="empty" wx:if="{{loading}}">加载中…</view>
+    <view class="empty" wx:if="{{finished && list.length > 0}}">没有更多了</view>
+
+    <view class="fab" bindtap="onCreate">＋</view>
+  </block>
+</view>

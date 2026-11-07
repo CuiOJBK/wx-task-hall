@@ -1,0 +1,30 @@
+<view class="page">
+  <!-- 未登录引导 -->
+  <view class="card login-guide" wx:if="{{needLogin}}">
+    <text class="title">登录后才能查看我的任务</text>
+    <text class="desc guide-desc">确认身份后即可查看自己发布和接取的任务。</text>
+    <button class="btn btn-primary guide-btn" bindtap="onLoginTap">微信一键登录</button>
+  </view>
+
+  <block wx:else>
+    <view class="tabs">
+      <view
+        class="tab {{role === item.key ? 'tab-active' : ''}}"
+        wx:for="{{roles}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onSwitchRole"
+      >
+        {{item.label}}
+      </view>
+    </view>
+
+    <task-card wx:for="{{list}}" wx:key="_id" task="{{item}}" bind:select="onTapTask" />
+
+    <view class="empty" wx:if="{{!loading && list.length === 0}}">
+      {{role === 'owner' ? '你还没有发布过任务' : '你还没有接过任务'}}
+    </view>
+    <view class="empty" wx:if="{{loading}}">加载中…</view>
+    <view class="empty" wx:if="{{finished && list.length > 0}}">没有更多了</view>
+  </block>
+</view>

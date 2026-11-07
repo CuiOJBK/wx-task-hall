@@ -1,0 +1,115 @@
+/* 全局样式：浅色底 + 暖色主色，骨架阶段只定义最基础的原子类 */
+page {
+  background: #f5f6f8;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #1a1d23;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+view,
+text,
+input,
+textarea,
+button {
+  box-sizing: border-box;
+}
+
+.page {
+  padding: 24rpx 24rpx 48rpx;
+  min-height: 100vh;
+}
+
+/* 卡片 */
+.card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(20, 24, 32, 0.04);
+}
+
+/* 文本 */
+.title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1d23;
+}
+
+.desc {
+  font-size: 26rpx;
+  color: #5a6069;
+  margin-top: 12rpx;
+  display: block;
+}
+
+.muted {
+  font-size: 24rpx;
+  color: #9aa0a8;
+}
+
+.accent {
+  color: #ff5a1f;
+}
+
+/* 按钮 */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.btn::after {
+  border: none;
+}
+
+.btn-primary {
+  background: #ff5a1f;
+  color: #ffffff;
+}
+
+.btn-ghost {
+  background: #ffffff;
+  color: #ff5a1f;
+  border: 1rpx solid #ff5a1f;
+}
+
+.btn-disabled {
+  background: #e6e8eb;
+  color: #a8adb5;
+}
+
+/* 空状态 */
+.empty {
+  text-align: center;
+  padding: 120rpx 0;
+  color: #9aa0a8;
+  font-size: 26rpx;
+}
+
+/* 分割 */
+.divider {
+  height: 1rpx;
+  background: #eef0f3;
+  margin: 20rpx 0;
+}
+
+/* 行 */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 标签 */
+.tag {
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  background: #f2f3f5;
+  color: #5a6069;
+}

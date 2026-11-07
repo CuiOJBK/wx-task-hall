@@ -1,0 +1,110 @@
+.login-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff6f1;
+  border: 1rpx solid #ffe0d0;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.login-bar-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.login-bar-title {
+  display: block;
+  font-size: 26rpx;
+  color: #b8441a;
+  font-weight: 500;
+}
+
+.login-bar-sub {
+  display: block;
+  font-size: 22rpx;
+  color: #c98e75;
+  margin-top: 4rpx;
+}
+
+.login-bar-btn {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  background: #ff5a1f;
+  color: #ffffff;
+  font-size: 24rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 999rpx;
+}
+
+.login-more {
+  text-align: center;
+  font-size: 26rpx;
+  color: #ff5a1f;
+  padding: 32rpx 0 120rpx;
+}
+
+.tabs {
+  display: flex;
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 8rpx;
+  margin-bottom: 20rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  color: #5a6069;
+  padding: 16rpx 0;
+  border-radius: 12rpx;
+}
+
+.tab-active {
+  background: #fff2ec;
+  color: #ff5a1f;
+  font-weight: 600;
+}
+
+.loc-hint {
+  margin: 0 0 16rpx 8rpx;
+}
+
+.warn {
+  background: #fff8e6;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 20rpx;
+  font-size: 26rpx;
+  color: #b37700;
+}
+
+.warn-tip {
+  display: block;
+  font-size: 24rpx;
+  color: #c99a3d;
+  margin-top: 6rpx;
+}
+
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 60rpx;
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  background: #ff5a1f;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(255, 90, 31, 0.35);
+}
+
+.fab-plus {
+  font-size: 56rpx;
+  line-height: 1;
+  margin-top: -4rpx;
+}

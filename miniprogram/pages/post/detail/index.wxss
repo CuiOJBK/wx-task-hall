@@ -1,0 +1,75 @@
+.post-page {
+  padding-bottom: 200rpx;
+}
+
+/* 未登录引导 */
+.login-guide {
+  margin-top: 120rpx;
+  padding: 48rpx 36rpx;
+  text-align: center;
+}
+
+.guide-desc {
+  display: block;
+  margin-top: 16rpx;
+  line-height: 1.7;
+}
+
+.guide-btn {
+  margin-top: 40rpx;
+}
+
+.post-nick {
+  font-size: 26rpx;
+  color: #5a6069;
+  font-weight: 500;
+}
+
+.post-content {
+  display: block;
+  font-size: 32rpx;
+  color: #1a1d23;
+  line-height: 1.8;
+  margin-top: 16rpx;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24rpx;
+}
+
+.like {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  background: #f7f8fa;
+}
+
+.like-icon {
+  font-size: 30rpx;
+  line-height: 1;
+}
+
+.like-num {
+  font-size: 26rpx;
+  color: #9aa0a8;
+}
+
+.like-on .like-num {
+  color: #ff5a1f;
+}
+
+.comment-head {
+  margin-bottom: 8rpx;
+}
+
+.bottom-space {
+  height: 40rpx;
+}
+
+/* 底部输入条与表情面板样式已抽到 components/comment-bar，本页不再维护 */

@@ -1,0 +1,19 @@
+<view class="card task-card" bindtap="onTap">
+  <view class="row">
+    <text class="task-title">{{task.title}}</text>
+    <text class="status status-{{task.status}}">{{task.statusText}}</text>
+  </view>
+
+  <text class="task-desc">{{task.descText}}</text>
+
+  <view class="meta">
+    <text class="reward" wx:if="{{task.reward > 0}}">¥{{task.rewardText}}</text>
+    <text class="loc" wx:if="{{task.locationText}}">📍 {{task.locationText}}</text>
+    <text class="distance" wx:if="{{task.distanceText}}">{{task.distanceText}}</text>
+  </view>
+
+  <view class="meta">
+    <text class="muted">{{task.timeText}}</text>
+    <text class="muted">💬 {{task.commentCount || 0}}</text>
+  </view>
+</view>

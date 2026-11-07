@@ -1,0 +1,102 @@
+<!-- 未登录：不渲染任何任务内容，只给登录引导（E1b / E12） -->
+<view class="page" wx:if="{{needLogin}}">
+  <view class="card login-guide">
+    <text class="title">登录后才能查看任务详情</text>
+    <text class="desc guide-desc">确认身份后即可查看完整内容、评论并接单。我们只获取你的微信标识，不会读取其他信息。</text>
+    <button class="btn btn-primary guide-btn" bindtap="onLoginTap">微信一键登录</button>
+  </view>
+</view>
+
+<view class="page detail-page" wx:elif="{{task}}">
+  <!-- 任务主体 -->
+  <view class="card">
+    <view class="row">
+      <text class="title">{{task.title}}</text>
+      <text class="status status-{{task.status}}">{{task.statusText}}</text>
+    </view>
+
+    <view class="price-row">
+      <text class="reward" wx:if="{{task.reward > 0}}">¥{{task.rewardText}}</text>
+      <text class="muted" wx:else>非悬赏任务</text>
+      <text class="muted">{{task.timeText}}</text>
+    </view>
+
+    <view class="divider"></view>
+    <text class="desc detail-desc">{{task.descText}}</text>
+
+    <view class="info-row" wx:if="{{task.location}}" bindtap="onPreviewLocation">
+      <text class="info-label">任务地点</text>
+      <text class="info-value link">📍 {{task.locationText}}</text>
+    </view>
+
+    <view class="info-row" wx:if="{{task.contact && permissions.canViewContact}}">
+      <text class="info-label">联系方式</text>
+      <text class="info-value">{{task.contact}}</text>
+    </view>
+
+    <view class="info-row">
+      <text class="info-label">评论</text>
+      <text class="info-value">{{task.commentCount || 0}} 条</text>
+    </view>
+  </view>
+
+  <!-- 操作区：按钮由服务端下发的 permissions 控制，前端不可越权 -->
+  <view class="card action-card">
+    <button
+      class="btn btn-primary"
+      wx:if="{{permissions.canGrab}}"
+      bindtap="onGrab"
+      disabled="{{acting}}"
+    >我要接单</button>
+
+    <button
+      class="btn btn-primary"
+      wx:if="{{permissions.canSubmit}}"
+      bindtap="onSubmitWork"
+      disabled="{{acting}}"
+    >完成任务并提交</button>
+
+    <button
+      class="btn btn-primary"
+      wx:if="{{permissions.canConfirm}}"
+      bindtap="onConfirm"
+      disabled="{{acting}}"
+    >确认完成</button>
+
+    <button
+      class="btn btn-ghost cancel-btn"
+      wx:if="{{permissions.canCancel}}"
+      bindtap="onCancel"
+      disabled="{{acting}}"
+    >取消任务</button>
+
+    <view class="muted no-action" wx:if="{{!permissions.canGrab && !permissions.canSubmit && !permissions.canConfirm && !permissions.canCancel}}">
+      {{task.status === 'pending' ? '这是你发布的任务，等待他人接单' : '当前状态下你无需操作'}}
+    </view>
+  </view>
+
+  <!-- 评论区 -->
+  <view class="card">
+    <view class="row comment-head">
+      <text class="title">评论</text>
+      <text class="muted">{{comments.length}} 条</text>
+    </view>
+    <comment-list list="{{comments}}" bind:reply="onReply" />
+  </view>
+
+  <view class="bottom-space"></view>
+
+  <!-- 底部输入条：文本 + emoji 面板，组件内部处理光标插入 -->
+  <comment-bar
+    value="{{commentText}}"
+    reply-to="{{replyTo}}"
+    sending="{{sending}}"
+    placeholder="说点什么…"
+    bind:input="onCommentInput"
+    bind:send="onSendComment"
+    bind:cancelreply="onCancelReply"
+  />
+</view>
+
+<view class="empty" wx:elif="{{loading}}">加载中…</view>
+<view class="empty" wx:else>任务不存在或已删除</view>

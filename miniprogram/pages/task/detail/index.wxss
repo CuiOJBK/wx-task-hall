@@ -1,0 +1,120 @@
+.detail-page {
+  padding-bottom: 200rpx;
+}
+
+/* 未登录引导 */
+.login-guide {
+  margin-top: 120rpx;
+  padding: 48rpx 36rpx;
+  text-align: center;
+}
+
+.guide-desc {
+  display: block;
+  margin-top: 16rpx;
+  line-height: 1.7;
+}
+
+.guide-btn {
+  margin-top: 40rpx;
+}
+
+.status {
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  white-space: nowrap;
+  margin-left: 16rpx;
+}
+
+.status-pending {
+  background: #fff2ec;
+  color: #ff5a1f;
+}
+
+.status-accepted {
+  background: #eef4ff;
+  color: #2f6bff;
+}
+
+.status-confirming {
+  background: #fff8e6;
+  color: #b37700;
+}
+
+.status-completed {
+  background: #eefaf1;
+  color: #1a9c4b;
+}
+
+.status-cancelled {
+  background: #f2f3f5;
+  color: #9aa0a8;
+}
+
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+}
+
+.reward {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #ff5a1f;
+}
+
+.detail-desc {
+  font-size: 28rpx;
+  color: #3d434b;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 20rpx;
+}
+
+.info-label {
+  width: 140rpx;
+  font-size: 26rpx;
+  color: #9aa0a8;
+  flex-shrink: 0;
+}
+
+.info-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: #1a1d23;
+  word-break: break-all;
+}
+
+.link {
+  color: #2f6bff;
+}
+
+.action-card {
+  padding: 24rpx;
+}
+
+.cancel-btn {
+  margin-top: 16rpx;
+}
+
+.no-action {
+  text-align: center;
+  padding: 12rpx 0;
+}
+
+.comment-head {
+  margin-bottom: 8rpx;
+}
+
+.bottom-space {
+  height: 40rpx;
+}
+
+/* 底部输入条与表情面板样式已抽到 components/comment-bar，本页不再维护 */

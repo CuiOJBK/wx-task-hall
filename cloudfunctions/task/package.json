@@ -1,0 +1,9 @@
+{
+  "name": "task",
+  "version": "1.0.0",
+  "description": "任务发布、列表、详情、接单与状态流转",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

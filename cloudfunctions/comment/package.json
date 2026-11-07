@@ -1,0 +1,9 @@
+{
+  "name": "comment",
+  "version": "1.0.0",
+  "description": "两级评论：任务评论与大厅话题回复",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

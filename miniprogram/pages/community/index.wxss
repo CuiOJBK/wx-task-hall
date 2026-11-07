@@ -1,0 +1,85 @@
+.community-head {
+  background: linear-gradient(135deg, #fff6f1 0%, #ffffff 70%);
+}
+
+.head-desc {
+  display: block;
+  margin-top: 8rpx;
+}
+
+.post-nick {
+  font-size: 26rpx;
+  color: #5a6069;
+  font-weight: 500;
+}
+
+.post-content {
+  display: block;
+  font-size: 30rpx;
+  color: #1a1d23;
+  line-height: 1.7;
+  margin: 12rpx 0;
+  word-break: break-all;
+}
+
+.post-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 24rpx;
+}
+
+.like {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+}
+
+.like-icon {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.like-num {
+  font-size: 24rpx;
+  color: #9aa0a8;
+}
+
+.like-on .like-num {
+  color: #ff5a1f;
+}
+
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 60rpx;
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  background: #ff5a1f;
+  color: #ffffff;
+  font-size: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(255, 90, 31, 0.35);
+}
+
+/* 未登录引导 */
+.login-guide {
+  margin-top: 120rpx;
+  padding: 48rpx 36rpx;
+  text-align: center;
+}
+
+.guide-desc {
+  display: block;
+  margin-top: 16rpx;
+  line-height: 1.7;
+}
+
+.guide-btn {
+  margin-top: 40rpx;
+}

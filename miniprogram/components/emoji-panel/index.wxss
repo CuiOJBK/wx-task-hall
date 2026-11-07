@@ -1,0 +1,92 @@
+.panel {
+  background: #f7f8fa;
+  border-top: 1rpx solid #eef0f3;
+  display: flex;
+  flex-direction: column;
+  animation: panel-up 0.18s ease-out;
+}
+
+@keyframes panel-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.grid-scroll {
+  flex: 1;
+  height: 0;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 12rpx 16rpx;
+}
+
+.cell {
+  width: 12.5%;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  line-height: 1;
+}
+
+.cell-hover {
+  background: #eef0f3;
+  border-radius: 12rpx;
+}
+
+.tabbar {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-top: 1rpx solid #eef0f3;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab-scroll {
+  flex: 1;
+  height: 88rpx;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  height: 88rpx;
+  padding: 0 24rpx;
+  font-size: 26rpx;
+  color: #8a8f99;
+  white-space: nowrap;
+}
+
+.tab-active {
+  color: #ff5a1f;
+  font-weight: 600;
+  position: relative;
+}
+
+.del {
+  width: 96rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #5a6069;
+  flex-shrink: 0;
+}
+
+.del-hover {
+  background: #eef0f3;
+}

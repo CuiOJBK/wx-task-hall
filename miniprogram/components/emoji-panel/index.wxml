@@ -1,0 +1,29 @@
+<view class="panel" style="height: {{height}}rpx;">
+  <!-- 表情网格 -->
+  <scroll-view class="grid-scroll" scroll-y enable-flex>
+    <view class="grid">
+      <view
+        class="cell"
+        wx:for="{{list}}"
+        wx:key="*this"
+        data-emoji="{{item}}"
+        bindtap="onTapEmoji"
+        hover-class="cell-hover"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部分类栏 -->
+  <view class="tabbar">
+    <scroll-view class="tab-scroll" scroll-x enable-flex>
+      <view
+        class="tab {{activeKey === item.key ? 'tab-active' : ''}}"
+        wx:for="{{tabs}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onTapTab"
+      >{{item.name}}</view>
+    </scroll-view>
+    <view class="del" bindtap="onDelete" hover-class="del-hover">⌫</view>
+  </view>
+</view>

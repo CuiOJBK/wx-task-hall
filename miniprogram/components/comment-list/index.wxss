@@ -1,0 +1,75 @@
+.comment-item {
+  display: flex;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #eef0f3;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: #f2f3f5;
+  color: #5a6069;
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.nickname {
+  font-size: 26rpx;
+  color: #5a6069;
+  font-weight: 500;
+}
+
+.content {
+  display: block;
+  font-size: 28rpx;
+  color: #1a1d23;
+  margin-top: 8rpx;
+  word-break: break-all;
+}
+
+.actions {
+  margin-top: 8rpx;
+}
+
+.reply-btn {
+  font-size: 24rpx;
+  color: #9aa0a8;
+}
+
+.children {
+  background: #f7f8fa;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin-top: 16rpx;
+}
+
+.child {
+  font-size: 26rpx;
+  line-height: 1.7;
+}
+
+.child-nick {
+  color: #2f6bff;
+}
+
+.child-content {
+  color: #1a1d23;
+}
+
+.child-time {
+  margin-left: 12rpx;
+}

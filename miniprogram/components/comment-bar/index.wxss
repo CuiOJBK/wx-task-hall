@@ -1,0 +1,88 @@
+.composer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: #ffffff;
+  box-shadow: 0 -2rpx 12rpx rgba(20, 24, 32, 0.06);
+}
+
+.reply-tip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 28rpx 0;
+  font-size: 24rpx;
+  color: #9aa0a8;
+}
+
+.reply-cancel {
+  color: #ff5a1f;
+  padding: 0 8rpx;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+}
+
+/* 面板展开时输入条不在屏幕最底部，去掉安全区留白，否则中间会多一条空白 */
+.panel-open .bar {
+  padding-bottom: 16rpx;
+}
+
+/* 键盘弹起时同理：安全区已被键盘覆盖，留着会多一条空白 */
+.kb-open .bar {
+  padding-bottom: 16rpx;
+}
+
+.input {
+  flex: 1;
+  height: 72rpx;
+  background: #f5f6f8;
+  border-radius: 999rpx;
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  color: #1a1d23;
+}
+
+.input-placeholder {
+  color: #9aa0a8;
+}
+
+.icon-btn {
+  width: 76rpx;
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.icon-hover {
+  background: #f2f3f5;
+}
+
+.icon {
+  font-size: 42rpx;
+  line-height: 1;
+}
+
+.send-btn {
+  margin-left: 8rpx;
+  font-size: 28rpx;
+  color: #ffffff;
+  background: #ff5a1f;
+  padding: 14rpx 32rpx;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+}
+
+.send-disabled {
+  background: #e6e8eb;
+  color: #a8adb5;
+}

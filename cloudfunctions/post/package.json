@@ -1,0 +1,9 @@
+{
+  "name": "post",
+  "version": "1.0.0",
+  "description": "大厅交流话题",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

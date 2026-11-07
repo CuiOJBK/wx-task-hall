@@ -1,0 +1,55 @@
+{
+  "pages": [
+    "pages/hall/index",
+    "pages/community/index",
+    "pages/task/mine/index",
+    "pages/user/index",
+    "pages/task/publish/index",
+    "pages/task/detail/index",
+    "pages/post/detail/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "任务大厅",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f6f8",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#8a8f99",
+    "selectedColor": "#ff5a1f",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/hall/index",
+        "text": "任务大厅"
+      },
+      {
+        "pagePath": "pages/community/index",
+        "text": "交流"
+      },
+      {
+        "pagePath": "pages/task/mine/index",
+        "text": "我的任务"
+      },
+      {
+        "pagePath": "pages/user/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于发布任务时标记任务地点，以及按距离查看附近任务"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseLocation"
+  ]
+}

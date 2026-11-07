@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "我的任务",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "task-card": "/components/task-card/index"
+  }
+}

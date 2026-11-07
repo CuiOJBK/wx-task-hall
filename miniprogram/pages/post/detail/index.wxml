@@ -1,0 +1,49 @@
+<!-- 未登录：不渲染话题内容 -->
+<view class="page" wx:if="{{needLogin}}">
+  <view class="card login-guide">
+    <text class="title">登录后才能查看话题</text>
+    <text class="desc guide-desc">确认身份后即可参与大厅交流。我们只获取你的微信标识，不会读取其他信息。</text>
+    <button class="btn btn-primary guide-btn" bindtap="onLoginTap">微信一键登录</button>
+  </view>
+</view>
+
+<view class="page post-page" wx:elif="{{post}}">
+  <view class="card">
+    <view class="row">
+      <text class="post-nick">{{post.nickname || '匿名用户'}}</text>
+      <text class="muted">{{post.timeText}}</text>
+    </view>
+    <text class="post-content">{{post.content}}</text>
+
+    <view class="post-actions">
+      <view class="like {{post.liked ? 'like-on' : ''}}" bindtap="onTapLike">
+        <text class="like-icon">{{post.liked ? '❤️' : '🤍'}}</text>
+        <text class="like-num">{{post.likeCount || 0}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row comment-head">
+      <text class="title">回复</text>
+      <text class="muted">{{replies.length}} 条</text>
+    </view>
+    <comment-list list="{{replies}}" empty-text="还没有回复" bind:reply="onReply" />
+  </view>
+
+  <view class="bottom-space"></view>
+
+  <!-- 底部输入条：文本 + emoji 面板 -->
+  <comment-bar
+    value="{{text}}"
+    reply-to="{{replyTo}}"
+    sending="{{sending}}"
+    placeholder="说点什么…"
+    bind:input="onInput"
+    bind:send="onSend"
+    bind:cancelreply="onCancelReply"
+  />
+</view>
+
+<view class="empty" wx:elif="{{loading}}">加载中…</view>
+<view class="empty" wx:else>话题不存在或已删除</view>
