@@ -146,6 +146,20 @@
 
 /* 底部输入条与表情面板样式已抽到 components/comment-bar，本页不再维护 */
 
+.contact-value {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.contact-toggle {
+  margin-left: 16rpx;
+  font-size: 24rpx;
+  color: #ff5a1f;
+  padding: 6rpx 0 6rpx 12rpx;
+}
+
 /* 图片：任务配图与完成凭证共用 */
 .img-grid {
   display: flex;

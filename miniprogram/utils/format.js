@@ -91,7 +91,30 @@ function decoratePost(p) {
   }
 }
 
+/**
+ * 联系方式打码
+ * 手机号：保留前 3 后 4；其他文本：保留首尾各 2 个字符
+ */
+function maskContact(text) {
+  const s = String(text || '').trim()
+  if (!s) return ''
+
+  const digits = s.replace(/\D/g, '')
+  // 按「数字序号」打码中间四位，保留原有分隔符（138-1234-5678 也能正确打码）
+  if (digits.length === 11 && digits.charAt(0) === '1') {
+    let di = -1
+    return s.replace(/\d/g, (d) => {
+      di++
+      return di >= 3 && di <= 6 ? '*' : d
+    })
+  }
+  if (s.length <= 2) return s.slice(0, 1) + '****'
+  if (s.length <= 4) return s.slice(0, 1) + '****' + s.slice(-1)
+  return s.slice(0, 2) + '****' + s.slice(-2)
+}
+
 module.exports = {
+  maskContact,
   timeAgo,
   yuan,
   statusText,

@@ -2,6 +2,7 @@ const taskService = require('../../../services/task')
 const { showError } = require('../../../utils/ui')
 const commentService = require('../../../services/comment')
 const { COMMENT_TARGET } = require('../../../utils/constants')
+const { maskContact } = require('../../../utils/format')
 const { loginDirect } = require('../../../utils/auth')
 const { chooseImages, uploadImages } = require('../../../utils/upload')
 
@@ -18,6 +19,9 @@ Page({
     acting: false,
     needLogin: false,
     myOpenid: '',
+    // 联系方式默认打码，需主动点「查看」才显示完整
+    contactMasked: '',
+    contactRevealed: false,
     reportVisible: false,
     reportTarget: { type: '', id: '', title: '举报' }
   },
@@ -80,7 +84,9 @@ Page({
       this.setData({
         task: detail.task,
         permissions: detail.permissions || {},
-        comments: commentRes.list
+        comments: commentRes.list,
+        contactMasked: detail.task ? maskContact(detail.task.contact) : '',
+        contactRevealed: false
       })
       wx.setNavigationBarTitle({ title: detail.task ? detail.task.title : '任务详情' })
     } catch (err) {
@@ -88,6 +94,11 @@ Page({
     } finally {
       this.setData({ loading: false })
     }
+  },
+
+  /** 显示 / 隐藏完整联系方式（只有任务双方能看到这一行） */
+  onToggleContact() {
+    this.setData({ contactRevealed: !this.data.contactRevealed })
   },
 
   /** 评论点赞后同步本地列表，避免整页重载 */

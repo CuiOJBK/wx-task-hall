@@ -45,7 +45,12 @@
 
     <view class="info-row" wx:if="{{task.contact && permissions.canViewContact}}">
       <text class="info-label">联系方式</text>
-      <text class="info-value">{{task.contact}}</text>
+      <view class="contact-value">
+        <text class="info-value">{{contactRevealed ? task.contact : contactMasked}}</text>
+        <text class="contact-toggle" bindtap="onToggleContact">
+          {{contactRevealed ? '隐藏' : '查看'}}
+        </text>
+      </view>
     </view>
 
     <view class="info-row">

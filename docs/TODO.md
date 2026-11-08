@@ -16,7 +16,7 @@
 | P0-1 | 内容安全检测 | **✅ 已接**：任务标题+描述、评论、话题、昵称全部过 `msgSecCheck`（v2，scene 1/2/3），命中返回 `CONTENT_RISK` | 图片检测（`mediaCheckAsync`）待 P1-1 图片上传落地后再补 |
 | P0-2 | 隐私协议 + 用户协议 | **✅ 代码侧完成**：`pages/agreement` 双 Tab 协议页 + `components/privacy-popup` 首启授权弹窗（`agreePrivacyAuthorization`） | **仍需在小程序后台配置《用户隐私保护指引》并申请位置接口**，否则弹窗不会出现 |
 | P0-3 | 昵称头像 | **✅ 已完成**：头像用 `open-type="chooseAvatar"` → 云存储 → fileID；昵称改用 `input type="nickname"` | 云存储需设为「所有用户可读」，否则头像在别人页面加载不出 |
-| P0-4 | 联系方式保护 | 列表页已剥离 `contact`，详情页仅双方可见 | 进一步：详情页展示时做中间四位打码，或接虚拟号。当前实现已够过审 | — |
+| P0-4 | 联系方式保护 | **✅ 已完成**：列表页剥离 `contact`；详情页仅双方可见，且默认打码，需点「查看」才显示完整 | 手机号打码保留前 3 后 4 并保留分隔符；其他文本留首尾各 2 字符 |
 | P0-5 | 列表 `hasMore` 不准 | **✅ 已修**：4 处改为「多取一条」（`limit+1`），`hasMore = rows.length > limit` 后裁剪 | task.list / task.mine / comment.list / post.list 全覆盖 |
 | P0-6 | 举报入口 | **✅ 已完成**：任务/话题/评论三类目标都能举报，`report` 云函数去重 + 禁举报自己，`report-sheet` 弹层选理由 | 管理端 `report.list` 已备（仅 `ADMIN_OPENIDS`），后台 UI 待 P2-5 |
 | **P0-7** | **权限体系落地** | **✅ G1–G8 全部完成（V4 按昵称判定）** | **剩余：① 头像纳入资料完整判定（依赖 P1-1 图片上传）；② 封禁管理后台；③ 评论点赞** | — |
