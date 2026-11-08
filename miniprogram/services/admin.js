@@ -38,6 +38,12 @@ const logList = wrap('logList', (d) => ({
   hasMore: !!d.hasMore
 }))
 
+const reportList = wrap('reportList', (d) => ({
+  list: d.list || [],
+  hasMore: !!d.hasMore
+}))
+const reportHandle = wrap('reportHandle')
+
 const settingsGet = wrap('settingsGet')
 const settingsSave = wrap('settingsSave')
 
@@ -54,6 +60,8 @@ module.exports = {
   roleList,
   roleUpdate,
   logList,
+  reportList,
+  reportHandle,
   settingsGet,
   settingsSave
 }

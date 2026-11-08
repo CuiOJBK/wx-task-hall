@@ -67,6 +67,15 @@ async function safeCount(query) {
   }
 }
 
+async function getDocById(coll, id) {
+  try {
+    const r = await db.collection(coll).doc(id).get()
+    return r.data || null
+  } catch (e) {
+    return null
+  }
+}
+
 async function addWithColl(name, data) {
   try {
     return await db.collection(name).add({ data })
@@ -472,6 +481,104 @@ const ACTIONS = {
       list: rows.slice(0, limit),
       hasMore: rows.length > limit
     }
+  },
+
+  /**
+   * 举报列表（后台）
+   * 支持 status / targetType 筛选，按时间倒序分页
+   */
+  async reportList(data, ctx) {
+    await assertAdmin(ctx)
+    const { limit, page } = normPage(data)
+
+    const where = {}
+    if (data.status) where.status = String(data.status)
+    if (data.targetType) where.targetType = String(data.targetType)
+
+    const rows = await safeGet(
+      db
+        .collection(C_REPORT)
+        .where(where)
+        .orderBy('createdAt', 'desc')
+        .skip(page * limit)
+        .limit(limit + 1),
+      []
+    )
+
+    return {
+      list: rows.slice(0, limit).map((r) => ({
+        _id: r._id,
+        targetType: r.targetType,
+        targetId: r.targetId,
+        targetSnapshot: r.targetSnapshot || '',
+        reason: r.reason || '',
+        detail: r.detail || '',
+        reporterNickname: r.reporterNickname || '',
+        reporterOpenid: r.reporterOpenid || '',
+        status: r.status || 'pending',
+        handleAction: r.handleAction || '',
+        createdAt: r.createdAt
+      })),
+      hasMore: rows.length > limit
+    }
+  },
+
+  /**
+   * 处置举报
+   * action: resolve 已处理（仅标记）| ignore 忽略 | remove 删除内容并标记
+   * 同一目标下的其它待处理举报会一并处理，避免重复劳动
+   */
+  async reportHandle(data, ctx) {
+    const me = await assertAdmin(ctx)
+    assert(data.id, 'INVALID_PARAM', '缺少举报 ID')
+
+    const action = String(data.action || '')
+    assert(['resolve', 'ignore', 'remove'].indexOf(action) > -1, 'INVALID_PARAM', '处理动作不合法')
+
+    const report = await getDocById(C_REPORT, data.id)
+    assert(report, 'NOT_FOUND', '举报记录不存在')
+    assert(report.status === 'pending' || !report.status, 'STATUS_CONFLICT', '该举报已经处理过了')
+
+    const note = String(data.note || '').slice(0, 200)
+
+    if (action === 'remove') {
+      const coll = CONTENT_COLL[report.targetType]
+      assert(coll, 'INVALID_PARAM', '该目标类型不支持删除')
+      await db.collection(coll).doc(report.targetId).remove().catch(() => {})
+      if (report.targetType !== 'comment') {
+        const targetType = report.targetType === 'task' ? 'task' : 'hall'
+        await db
+          .collection(C_COMMENT)
+          .where({ targetType, targetId: report.targetId })
+          .remove()
+          .catch(() => {})
+      }
+    }
+
+    const status = action === 'ignore' ? 'ignored' : action === 'remove' ? 'removed' : 'resolved'
+    const patch = {
+      status,
+      handleAction: action,
+      handleNote: note,
+      handledBy: me.openid,
+      handledAt: db.serverDate()
+    }
+
+    // 同目标的其他待处理举报一并结案
+    await db
+      .collection(C_REPORT)
+      .where({ targetType: report.targetType, targetId: report.targetId, status: 'pending' })
+      .update({ data: patch })
+      .catch((e) => console.warn('[admin] 批量结案失败', e.message))
+
+    await writeLog(me, 'report.' + action, {
+      targetType: report.targetType,
+      targetId: report.targetId,
+      reportId: data.id,
+      note
+    })
+
+    return { status }
   },
 
   /** 读取系统设置 */

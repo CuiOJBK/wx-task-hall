@@ -140,34 +140,6 @@ const ACTIONS = {
     return { id: r._id }
   },
 
-  /** 管理端：查询举报列表（仅 ADMIN_OPENIDS） */
-  async list(data, ctx) {
-    const allow = adminOpenids()
-    if (ctx.openid && (!allow.length || allow.indexOf(ctx.openid) === -1)) {
-      throw bizError('FORBIDDEN', '无权查看举报列表')
-    }
-
-    const limit = Math.min(Number(data.pageSize) || 20, 50)
-    const page = Math.max(Number(data.page) || 0, 0)
-    const where = {}
-    if (data.status) where.status = String(data.status)
-
-    const rows = await safeGet(
-      db
-        .collection(C_REPORT)
-        .where(where)
-        .orderBy('createdAt', 'desc')
-        .skip(page * limit)
-        .limit(limit + 1),
-      []
-    )
-
-    return {
-      list: rows.slice(0, limit),
-      hasMore: rows.length > limit
-    }
-  },
-
   /** 举报理由枚举，前端可直接用，避免两边各写一份 */
   async reasons() {
     return { reasons: REASONS }

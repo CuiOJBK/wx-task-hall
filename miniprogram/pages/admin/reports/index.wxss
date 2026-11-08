@@ -1,0 +1,21 @@
+@import "../../../styles/admin.wxss";
+
+.line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 6rpx;
+}
+
+.snap {
+  margin-left: 10rpx;
+}
+
+.adm-row-title.snap {
+  font-weight: 400;
+  font-size: 26rpx;
+}
+
+.adm-nav-item {
+  margin-right: 12rpx;
+}

@@ -11,6 +11,7 @@
     "pages/admin/dashboard/index",
     "pages/admin/users/index",
     "pages/admin/content/index",
+    "pages/admin/reports/index",
     "pages/admin/roles/index",
     "pages/admin/logs/index",
     "pages/admin/settings/index"

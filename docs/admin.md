@@ -12,6 +12,7 @@
    └─ 管理员后台（仅 isAdmin 可见，橙色高亮）
         └─ 数据概览 dashboard
               ├─ 用户管理 users
+              ├─ 举报处理 reports
               ├─ 内容治理 content
               ├─ 角色权限 roles
               ├─ 操作日志 logs
@@ -68,27 +69,46 @@
 - 批量：勾选后底部操作条，支持批量启用 / 禁用 / 删除
 - 校验：昵称 2–20 字、openid 必填且不重复、信用分 0–1000，错误红字挂在字段下方
 
-### 3. 内容治理 `pages/admin/content`
+### 3. 举报处理 `pages/admin/reports`
+
+闭环流程：**接收 → 查看 → 处置 → 结案**。
+
+- Tab 筛选：待处理 / 已处理 / 已忽略 / 已删除 / 全部
+- 列表展示：目标类型标签、内容快照、举报理由、补充说明、举报人与时间
+- 「查看内容」：任务/话题跳对应详情页；评论无详情页，弹快照
+- 三种处置：
+
+| 动作 | 效果 | 状态 |
+|---|---|---|
+| 标记已处理 | 仅结案，不动内容 | `resolved` |
+| 忽略 | 判定为误报 | `ignored` |
+| 删除内容 | 物理删除目标（任务/话题连带删评论） | `removed` |
+
+**关键设计**：处理一条举报时，**同一内容下的其它待处理举报一并结案**，避免对同一条违规内容反复点三次。
+
+概览页「待处理举报」指标卡可直接点进本页。
+
+### 4. 内容治理 `pages/admin/content`
 
 - 三个类型 Tab：任务 / 话题 / 评论
 - 搜索：标题或正文关键词
 - 单条删除、批量删除
 - 删除任务或话题时，**级联清理其下评论**（服务端处理）
 
-### 4. 角色权限 `pages/admin/roles`
+### 5. 角色权限 `pages/admin/roles`
 
 - ROOT 列表：来自环境变量，只读，标注「后台不可增删改」
 - 管理员列表：可撤销（root）；授予走「用户管理 → 编辑 → 角色」
 - 非 root 进入只读，按钮隐藏
 
-### 5. 操作日志 `pages/admin/logs`
+### 6. 操作日志 `pages/admin/logs`
 
 记录所有写操作，字段：
 
 | 字段 | 说明 |
 |---|---|
 | `operatorOpenid` / `operatorLevel` | 操作人与等级 |
-| `action` | `user.create` / `user.update` / `user.setStatus` / `user.delete` / `content.remove` / `role.update` / `settings.save` |
+| `action` | `user.create` / `user.update` / `user.setStatus` / `user.delete` / `content.remove` / `role.update` / `settings.save` / `report.resolve` / `report.ignore` / `report.remove` |
 | `targetType` / `targetId` | 目标对象 |
 | `detail` | JSON 摘要，截断 500 字符 |
 | `createdAt` | 服务端时间 |
@@ -96,7 +116,7 @@
 - 按操作人 openid 搜索、触底分页
 - 写日志失败不阻断主流程（`console.warn` 后继续）
 
-### 6. 系统设置 `pages/admin/settings`
+### 7. 系统设置 `pages/admin/settings`
 
 存 `settings` 集合（`key='global'` 单文档）：
 
@@ -132,7 +152,7 @@
 ## 五、真实限制
 
 1. **不是 PC 后台**。要 PC 端需要独立 Web 工程 + 云开发 HTTP 访问 + 另一套登录鉴权，工作量和风险都大得多。当前形态在手机上完成日常治理够用。
-2. **举报处理没有闭环**。举报进 `reports` 集合，后台目前只能通过内容治理页手动删除内容，没有「标记已处理」按钮。`report.list` 接口已备好，只差 UI。
+2. ~~举报处理没有闭环~~ ✅ 已补：新增「举报处理」页，支持标记已处理 / 忽略 / 删除内容，同目标自动合并结案。
 3. **设置项只有存储，没有消费方**。`maxReward`、`allowPublish` 还没接进发布任务的校验。接的话改 `task.create` 一处即可。
 4. **用户「新增」是预置档案**，主要用于内部账号或数据迁移，正常用户仍由微信登录自动建档。
 

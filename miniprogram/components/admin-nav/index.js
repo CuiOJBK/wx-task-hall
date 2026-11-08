@@ -2,6 +2,7 @@ const TABS = [
   { key: 'dashboard', name: '概览', url: '/pages/admin/dashboard/index' },
   { key: 'users', name: '用户', url: '/pages/admin/users/index' },
   { key: 'content', name: '内容', url: '/pages/admin/content/index' },
+  { key: 'reports', name: '举报', url: '/pages/admin/reports/index' },
   { key: 'roles', name: '角色', url: '/pages/admin/roles/index' },
   { key: 'logs', name: '日志', url: '/pages/admin/logs/index' },
   { key: 'settings', name: '设置', url: '/pages/admin/settings/index' }

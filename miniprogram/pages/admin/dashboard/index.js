@@ -10,6 +10,7 @@ Page({
     bars: [],
     shortcuts: [
       { key: 'users', name: '用户管理', url: '/pages/admin/users/index' },
+      { key: 'reports', name: '举报处理', url: '/pages/admin/reports/index' },
       { key: 'content', name: '内容治理', url: '/pages/admin/content/index' },
       { key: 'roles', name: '角色权限', url: '/pages/admin/roles/index' },
       { key: 'logs', name: '操作日志', url: '/pages/admin/logs/index' },
@@ -59,5 +60,18 @@ Page({
 
   onShortcut(e) {
     wx.redirectTo({ url: e.currentTarget.dataset.url })
+  },
+
+  /** 指标卡点击：举报卡跳举报处理，用户卡跳用户管理，其余跳内容治理 */
+  onMetricTap(e) {
+    const key = e.currentTarget.dataset.key
+    const map = {
+      reports: '/pages/admin/reports/index',
+      users: '/pages/admin/users/index',
+      tasks: '/pages/admin/content/index',
+      running: '/pages/admin/content/index'
+    }
+    const url = map[key]
+    if (url) wx.redirectTo({ url })
   }
 })

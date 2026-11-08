@@ -12,14 +12,4 @@ async function createReport(payload) {
   return res.data
 }
 
-async function listReports(p = {}) {
-  const res = await call('report', 'list', {
-    status: p.status || '',
-    page: p.page || 0,
-    pageSize: p.pageSize || 20
-  })
-  const d = res.data || {}
-  return { list: d.list || [], hasMore: !!d.hasMore }
-}
-
-module.exports = { createReport, listReports, REASONS }
+module.exports = { createReport, REASONS }
