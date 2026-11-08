@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "角色权限",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "admin-nav": "/components/admin-nav/index"
+  }
+}

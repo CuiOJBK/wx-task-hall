@@ -1,0 +1,5 @@
+@import "../../../styles/admin.wxss";
+
+.adm-card .adm-row {
+  background: #f5f6f8;
+}

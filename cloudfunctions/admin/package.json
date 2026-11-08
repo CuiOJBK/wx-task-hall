@@ -1,0 +1,9 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "description": "管理员后台：概览 / 用户 / 内容 / 角色 / 日志 / 设置",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

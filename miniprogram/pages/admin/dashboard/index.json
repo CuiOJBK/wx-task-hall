@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "数据概览",
+  "usingComponents": {
+    "admin-nav": "/components/admin-nav/index"
+  }
+}

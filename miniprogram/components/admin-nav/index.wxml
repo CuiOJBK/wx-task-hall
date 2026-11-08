@@ -1,0 +1,16 @@
+<view class="adm-top">
+  <text class="adm-back" bindtap="onBack">‹ 返回</text>
+  <text class="adm-top-title">{{title}}</text>
+  <text class="adm-top-right"></text>
+</view>
+
+<scroll-view class="adm-tabs" scroll-x enable-flex>
+  <view
+    class="adm-tab {{active === item.key ? 'on' : ''}}"
+    wx:for="{{tabs}}"
+    wx:key="key"
+    data-key="{{item.key}}"
+    data-url="{{item.url}}"
+    bindtap="onTap"
+  >{{item.name}}</view>
+</scroll-view>

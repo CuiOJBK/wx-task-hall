@@ -1,0 +1,21 @@
+<view class="adm-page">
+  <admin-nav active="logs" title="操作日志" />
+
+  <view class="adm-filter">
+    <input class="adm-search" value="{{keyword}}" placeholder="按操作人 openid 搜索" bindinput="onKeyword" bindconfirm="onSearch" />
+    <view class="adm-select" bindtap="onSearch">搜索</view>
+  </view>
+
+  <view class="adm-row" wx:for="{{list}}" wx:key="_id">
+    <view class="adm-row-main">
+      <text class="adm-row-title">{{item.action}}</text>
+      <text class="adm-sub">{{item.timeText}}</text>
+    </view>
+    <text class="adm-row-meta">操作人：{{item.operatorOpenid}}（{{item.operatorLevel === 'root' ? 'ROOT' : '管理员'}}）</text>
+    <text class="adm-row-meta">{{item.detail}}</text>
+  </view>
+
+  <view class="adm-empty" wx:if="{{!loading && list.length === 0}}">暂无操作记录</view>
+  <view class="adm-loading" wx:if="{{loading}}">加载中…</view>
+  <view class="adm-more" wx:if="{{hasMore && !loading}}" bindtap="loadMore">加载更多</view>
+</view>

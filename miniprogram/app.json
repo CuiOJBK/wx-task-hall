@@ -7,7 +7,13 @@
     "pages/task/publish/index",
     "pages/task/detail/index",
     "pages/post/detail/index",
-    "pages/agreement/index"
+    "pages/agreement/index",
+    "pages/admin/dashboard/index",
+    "pages/admin/users/index",
+    "pages/admin/content/index",
+    "pages/admin/roles/index",
+    "pages/admin/logs/index",
+    "pages/admin/settings/index"
   ],
   "window": {
     "navigationBarTitleText": "任务大厅",

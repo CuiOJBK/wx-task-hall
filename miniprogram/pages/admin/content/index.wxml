@@ -1,0 +1,49 @@
+<view class="adm-page">
+  <admin-nav active="content" title="内容治理" />
+
+  <view class="adm-filter">
+    <view
+      class="adm-nav-item {{type === item.key ? 'on' : ''}}"
+      wx:for="{{types}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="onSwitchType"
+    >{{item.name}}</view>
+  </view>
+
+  <view class="adm-filter">
+    <input class="adm-search" value="{{keyword}}" placeholder="搜索标题或正文" bindinput="onKeyword" bindconfirm="onSearch" />
+    <view class="adm-select" bindtap="onSearch">搜索</view>
+  </view>
+
+  <view class="adm-row" wx:for="{{list}}" wx:key="_id">
+    <view class="adm-row-main">
+      <view class="adm-check {{selected[item._id] ? 'on' : ''}}" data-id="{{item._id}}" bindtap="onToggleSelect">
+        {{selected[item._id] ? '✓' : ''}}
+      </view>
+      <view class="grow">
+        <view class="line">
+          <text class="adm-row-title">{{item.title || item.content || '(空)'}}</text>
+          <text class="adm-tag info" wx:if="{{item.status}}">{{item.status}}</text>
+        </view>
+        <text class="adm-row-meta" wx:if="{{item.nickname}}">发布者：{{item.nickname}}</text>
+        <text class="adm-row-meta">{{item.openid}}</text>
+      </view>
+    </view>
+    <view class="adm-row-ops">
+      <text class="adm-op danger" data-item="{{item}}" bindtap="onDelete">删除</text>
+    </view>
+  </view>
+
+  <view class="adm-empty" wx:if="{{!loading && list.length === 0}}">暂无内容</view>
+  <view class="adm-loading" wx:if="{{loading}}">加载中…</view>
+  <view class="adm-more" wx:if="{{hasMore && !loading}}" bindtap="loadMore">加载更多</view>
+
+  <view class="adm-batch" wx:if="{{selectedCount > 0}}">
+    <text class="adm-batch-text">已选 {{selectedCount}} 条</text>
+    <view class="adm-batch-ops">
+      <text class="adm-batch-op" bindtap="onBatchDelete">批量删除</text>
+      <text class="adm-batch-op" bindtap="onClearSelect">取消</text>
+    </view>
+  </view>
+</view>

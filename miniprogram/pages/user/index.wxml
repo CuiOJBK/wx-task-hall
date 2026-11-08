@@ -52,6 +52,10 @@
   <view class="warn" wx:if="{{loginError}}">登录失败：{{loginError}}　请检查云开发是否开通</view>
 
   <view class="card menu">
+    <view class="menu-item admin-entry" wx:if="{{isAdmin}}" bindtap="onOpenAdmin">
+      <text>管理员后台</text>
+      <text class="arrow">›</text>
+    </view>
     <view class="menu-item" bindtap="onGoTasks">
       <text>我的任务</text>
       <text class="arrow">›</text>

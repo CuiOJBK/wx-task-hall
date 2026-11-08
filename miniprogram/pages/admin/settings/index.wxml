@@ -1,0 +1,40 @@
+<view class="adm-page">
+  <admin-nav active="settings" title="系统设置" />
+
+  <view class="adm-card">
+    <view class="adm-head"><text class="adm-title">业务参数</text></view>
+
+    <view class="adm-field">
+      <text class="adm-label">单任务赏金上限（元）</text>
+      <input class="adm-input" type="number" value="{{settings.maxReward}}" data-field="maxReward" bindinput="onInput" placeholder="0-100000" />
+      <text class="adm-error" wx:if="{{errors.maxReward}}">{{errors.maxReward}}</text>
+    </view>
+
+    <view class="adm-field">
+      <text class="adm-label">自动下架举报阈值（次）</text>
+      <input class="adm-input" type="number" value="{{settings.reportThreshold}}" data-field="reportThreshold" bindinput="onInput" placeholder="1-100" />
+      <text class="adm-error" wx:if="{{errors.reportThreshold}}">{{errors.reportThreshold}}</text>
+    </view>
+  </view>
+
+  <view class="adm-card">
+    <view class="adm-head"><text class="adm-title">运营开关与公告</text></view>
+
+    <view class="adm-switch-row">
+      <text class="adm-label" style="margin:0;">允许发布新任务</text>
+      <switch checked="{{settings.allowPublish}}" bindchange="onTogglePublish" color="#ff5a1f" />
+    </view>
+
+    <view class="adm-field" style="margin-top:24rpx;">
+      <text class="adm-label">大厅公告（最多 200 字）</text>
+      <textarea class="adm-textarea" value="{{settings.announcement}}" data-field="announcement" bindinput="onInput" maxlength="200" placeholder="留空则不展示" />
+      <text class="adm-error" wx:if="{{errors.announcement}}">{{errors.announcement}}</text>
+    </view>
+  </view>
+
+  <view class="adm-card">
+    <text class="adm-sub">「举报阈值」当前只做记录，自动下架逻辑待接入定时任务（P1-7）。</text>
+  </view>
+
+  <button class="adm-submit" bindtap="onSave" disabled="{{saving}}">{{saving ? '保存中…' : '保存设置'}}</button>
+</view>

@@ -8,6 +8,7 @@ App({
     authorized: false,
     // 资料是否完整（昵称非空）。决定能否执行写操作
     profileComplete: false,
+    isAdmin: false,
     user: null,
     loginError: ''
   },
@@ -34,6 +35,7 @@ App({
       this.globalData.openid = (d && d.openid) || ''
       this.globalData.authorized = !!(d && d.authorized)
       this.globalData.profileComplete = !!(d && d.profileComplete)
+      this.globalData.isAdmin = !!(d && d.isAdmin)
       this.globalData.user = (d && d.user) || null
       this.globalData.loginError = ''
       console.log('[app] 授权状态：', this.globalData.authorized ? '已登录' : '匿名')
@@ -51,6 +53,7 @@ App({
     this.globalData.openid = ''
     this.globalData.authorized = false
     this.globalData.profileComplete = false
+    this.globalData.isAdmin = false
     this.globalData.user = null
   }
 })

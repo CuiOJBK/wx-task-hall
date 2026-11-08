@@ -105,6 +105,13 @@ function adminOpenids() {
     .filter(Boolean)
 }
 
+/** 是否管理员：环境变量白名单 或 users.role = 'admin' */
+function isAdminUser(user) {
+  if (!user) return false
+  if (adminOpenids().indexOf(user.openid) > -1) return true
+  return user.role === 'admin' && (!user.status || user.status === 'active')
+}
+
 function assertAdmin(openid) {
   const allow = adminOpenids()
   // 控制台调用没有 openid，放行；客户端调用必须命中白名单
@@ -198,6 +205,7 @@ const ACTIONS = {
       openid: ctx.openid,
       authorized: isActive(user),
       profileComplete: isProfileComplete(user),
+      isAdmin: isAdminUser(user),
       nickname: nicknameStateOf(user),
       status: user ? (user.consent ? user.status || 'active' : 'unregistered') : 'unregistered',
       user: user || null
@@ -213,6 +221,7 @@ const ACTIONS = {
       openid: ctx.openid,
       authorized: true,
       profileComplete: isProfileComplete(user),
+      isAdmin: isAdminUser(user),
       nickname: nicknameStateOf(user),
       status: user.status || 'active',
       user

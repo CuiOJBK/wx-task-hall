@@ -1,0 +1,95 @@
+<view class="adm-page">
+  <admin-nav active="users" title="用户管理" />
+
+  <view class="adm-filter">
+    <input class="adm-search" value="{{keyword}}" placeholder="按昵称搜索" bindinput="onKeyword" bindconfirm="onSearch" />
+    <view class="adm-select" bindtap="onSearch">搜索</view>
+  </view>
+
+  <view class="adm-filter">
+    <view class="adm-nav-item {{statusFilter === '' ? 'on' : ''}}" data-status="" bindtap="onStatusFilter">全部</view>
+    <view class="adm-nav-item {{statusFilter === 'active' ? 'on' : ''}}" data-status="active" bindtap="onStatusFilter">正常</view>
+    <view class="adm-nav-item {{statusFilter === 'disabled' ? 'on' : ''}}" data-status="disabled" bindtap="onStatusFilter">已禁用</view>
+    <view class="grow"></view>
+    <view class="adm-select primary" bindtap="onAdd">+ 新增</view>
+  </view>
+
+  <view class="adm-row" wx:for="{{list}}" wx:key="_id">
+    <view class="adm-row-main">
+      <view class="adm-check {{selected[item._id] ? 'on' : ''}}" data-id="{{item._id}}" bindtap="onToggleSelect">
+        {{selected[item._id] ? '✓' : ''}}
+      </view>
+      <view class="grow">
+        <view class="line">
+          <text class="adm-row-title">{{item.nickname || '未设昵称'}}</text>
+          <text class="adm-tag {{item.status === 'disabled' ? 'off' : 'on'}}">{{item.status === 'disabled' ? '已禁用' : '正常'}}</text>
+          <text class="adm-tag info" wx:if="{{item.role === 'admin'}}">管理员</text>
+          <text class="adm-tag info" wx:if="{{item.isRoot}}">ROOT</text>
+        </view>
+        <text class="adm-row-meta">openid: {{item.openid}}</text>
+        <text class="adm-row-meta">信用分 {{item.creditScore}}</text>
+      </view>
+    </view>
+
+    <view class="adm-row-ops">
+      <text class="adm-op" data-item="{{item}}" bindtap="onEdit">编辑</text>
+      <text class="adm-op" data-item="{{item}}" bindtap="onToggleStatus">
+        {{item.status === 'disabled' ? '启用' : '禁用'}}
+      </text>
+      <text class="adm-op danger" wx:if="{{level === 'root'}}" data-item="{{item}}" bindtap="onDelete">删除</text>
+    </view>
+  </view>
+
+  <view class="adm-empty" wx:if="{{!loading && list.length === 0}}">没有符合条件的用户</view>
+  <view class="adm-loading" wx:if="{{loading}}">加载中…</view>
+  <view class="adm-more" wx:if="{{hasMore && !loading}}" bindtap="loadMore">加载更多</view>
+
+  <!-- 批量操作条 -->
+  <view class="adm-batch" wx:if="{{selectedCount > 0}}">
+    <text class="adm-batch-text">已选 {{selectedCount}} 项</text>
+    <view class="adm-batch-ops">
+      <text class="adm-batch-op" data-status="active" bindtap="onBatchStatus">启用</text>
+      <text class="adm-batch-op" data-status="disabled" bindtap="onBatchStatus">禁用</text>
+      <text class="adm-batch-op" wx:if="{{level === 'root'}}" bindtap="onBatchDelete">删除</text>
+      <text class="adm-batch-op" bindtap="onClearSelect">取消</text>
+    </view>
+  </view>
+
+  <!-- 新增 / 编辑表单 -->
+  <view class="adm-mask" wx:if="{{sheetVisible}}" catchtap="onCloseSheet">
+    <view class="adm-sheet" catchtap="noop">
+      <view class="adm-sheet-head">
+        <text class="adm-title">{{formMode === 'create' ? '新增用户' : '编辑用户'}}</text>
+        <text class="adm-sub" bindtap="onCloseSheet">关闭</text>
+      </view>
+
+      <view class="adm-field">
+        <text class="adm-label">昵称</text>
+        <input class="adm-input" value="{{form.nickname}}" data-field="nickname" bindinput="onFormInput" placeholder="2-20 个字" />
+        <text class="adm-error" wx:if="{{errors.nickname}}">{{errors.nickname}}</text>
+      </view>
+
+      <view class="adm-field" wx:if="{{formMode === 'create'}}">
+        <text class="adm-label">openid</text>
+        <input class="adm-input" value="{{form.openid}}" data-field="openid" bindinput="onFormInput" placeholder="微信用户唯一标识" />
+        <text class="adm-error" wx:if="{{errors.openid}}">{{errors.openid}}</text>
+      </view>
+
+      <view class="adm-field">
+        <text class="adm-label">信用分</text>
+        <input class="adm-input" type="number" value="{{form.creditScore}}" data-field="creditScore" bindinput="onFormInput" placeholder="0-1000" />
+        <text class="adm-error" wx:if="{{errors.creditScore}}">{{errors.creditScore}}</text>
+      </view>
+
+      <view class="adm-field" wx:if="{{level === 'root'}}">
+        <text class="adm-label">角色</text>
+        <view class="adm-filter">
+          <view class="adm-nav-item {{form.role === 'user' ? 'on' : ''}}" data-role="user" bindtap="onFormRole">普通用户</view>
+          <view class="adm-nav-item {{form.role === 'admin' ? 'on' : ''}}" data-role="admin" bindtap="onFormRole">管理员</view>
+        </view>
+      </view>
+
+      <button class="adm-submit" bindtap="onSubmit">{{formMode === 'create' ? '创建' : '保存'}}</button>
+    </view>
+  </view>
+</view>

@@ -7,6 +7,7 @@ Page({
     openid: '',
     authorized: false,
     profileComplete: false,
+    isAdmin: false,
     // 昵称：canChangeNickname=false 表示那一次修改机会已用完
     canChangeNickname: true,
     nicknameChangeCount: 0,
@@ -27,6 +28,7 @@ Page({
       openid: app.globalData.openid,
       authorized: !!app.globalData.authorized,
       profileComplete: !!app.globalData.profileComplete,
+      isAdmin: !!app.globalData.isAdmin,
       nicknameChangeCount: changeCount,
       canChangeNickname: !nick ? true : changeCount < 1,
       user,
@@ -124,6 +126,10 @@ Page({
 
   onGoTasks() {
     wx.switchTab({ url: '/pages/task/mine/index' })
+  },
+
+  onOpenAdmin() {
+    wx.navigateTo({ url: '/pages/admin/dashboard/index' })
   },
 
   onOpenAgreement() {

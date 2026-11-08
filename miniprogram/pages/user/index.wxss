@@ -47,6 +47,11 @@
   word-break: break-all;
 }
 
+.admin-entry {
+  color: #ff5a1f;
+  font-weight: 500;
+}
+
 .menu {
   padding: 0 28rpx;
 }

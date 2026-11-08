@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "内容治理",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "admin-nav": "/components/admin-nav/index"
+  }
+}

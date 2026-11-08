@@ -1,0 +1,19 @@
+@import "../../../styles/admin.wxss";
+
+.who {
+  display: flex;
+  flex-direction: column;
+}
+
+.shortcut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+  padding: 20rpx 20rpx;
+}
+
+.arrow {
+  color: #c4c8ce;
+  font-size: 32rpx;
+}

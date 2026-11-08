@@ -1,0 +1,21 @@
+@import "../../../styles/admin.wxss";
+
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.adm-select.primary {
+  background: #ff5a1f;
+  color: #ffffff;
+}
+
+.adm-nav-item {
+  margin-right: 12rpx;
+}

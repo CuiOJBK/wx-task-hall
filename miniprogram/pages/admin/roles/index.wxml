@@ -1,0 +1,39 @@
+<view class="adm-page">
+  <admin-nav active="roles" title="角色权限" />
+
+  <view class="adm-card">
+    <view class="adm-head">
+      <text class="adm-title">超级管理员（ROOT）</text>
+      <text class="adm-sub">{{roots.length}} 位</text>
+    </view>
+    <text class="adm-sub">权限来自云函数环境变量 ADMIN_OPENIDS，后台不可增删改。</text>
+    <view class="adm-row" wx:for="{{roots}}" wx:key="openid">
+      <text class="adm-row-meta">openid: {{item.openid}}</text>
+      <text class="adm-tag info">ROOT</text>
+    </view>
+  </view>
+
+  <view class="adm-card">
+    <view class="adm-head">
+      <text class="adm-title">管理员</text>
+      <text class="adm-sub">{{admins.length}} 位</text>
+    </view>
+    <text class="adm-sub" wx:if="{{level === 'root'}}">在「用户管理」里编辑某个用户，把角色改成管理员即可授予。</text>
+    <text class="adm-sub" wx:else>只有超级管理员能授予或撤销角色。</text>
+
+    <view class="adm-row" wx:for="{{admins}}" wx:key="_id">
+      <view class="adm-row-main">
+        <text class="adm-row-title">{{item.nickname || '未设昵称'}}</text>
+        <text class="adm-tag {{item.status === 'disabled' ? 'off' : 'on'}}">{{item.status === 'disabled' ? '已禁用' : '正常'}}</text>
+      </view>
+      <text class="adm-row-meta">openid: {{item.openid}}</text>
+      <view class="adm-row-ops" wx:if="{{level === 'root'}}">
+        <text class="adm-op danger" data-item="{{item}}" bindtap="onRevoke">撤销管理员</text>
+      </view>
+    </view>
+
+    <view class="adm-empty" wx:if="{{!loading && admins.length === 0}}">暂无普通管理员</view>
+  </view>
+
+  <button class="adm-submit ghost" bindtap="onGoUsers">去用户管理授予角色</button>
+</view>

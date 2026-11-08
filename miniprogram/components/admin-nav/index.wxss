@@ -1,0 +1,49 @@
+@import "../../styles/admin.wxss";
+
+.adm-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+}
+
+.adm-back {
+  font-size: 26rpx;
+  color: #5a6069;
+  width: 120rpx;
+}
+
+.adm-top-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1a1d23;
+}
+
+.adm-top-right {
+  width: 120rpx;
+}
+
+.adm-tabs {
+  display: flex;
+  white-space: nowrap;
+  padding-bottom: 16rpx;
+  width: 100%;
+}
+
+.adm-tab {
+  display: inline-flex;
+  align-items: center;
+  height: 60rpx;
+  padding: 0 26rpx;
+  margin-right: 12rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+  font-size: 26rpx;
+  color: #5a6069;
+  flex-shrink: 0;
+}
+
+.adm-tab.on {
+  background: #1a1d23;
+  color: #ffffff;
+}

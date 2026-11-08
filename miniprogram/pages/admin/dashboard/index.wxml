@@ -1,0 +1,54 @@
+<view class="adm-page">
+  <admin-nav active="dashboard" title="数据概览" />
+
+  <view class="adm-card who">
+    <text class="adm-title">{{adminName || '管理员'}}</text>
+    <text class="adm-sub">{{level === 'root' ? '超级管理员（openid 白名单）' : '普通管理员'}}</text>
+  </view>
+
+  <view class="adm-metrics">
+    <view class="adm-metric" wx:for="{{cards}}" wx:key="key">
+      <text class="adm-metric-label">{{item.label}}</text>
+      <text class="adm-metric-value">{{item.value}}</text>
+      <text class="adm-metric-sub">{{item.sub}}</text>
+    </view>
+  </view>
+
+  <view class="adm-card">
+    <view class="adm-head">
+      <text class="adm-title">近 7 天新增</text>
+      <text class="adm-sub" wx:if="{{loading}}">加载中…</text>
+    </view>
+
+    <view class="adm-chart">
+      <view class="adm-chart-col" wx:for="{{bars}}" wx:key="label">
+        <view class="adm-chart-bars">
+          <view class="adm-chart-bar tasks" style="height: {{item.taskH}}%;"></view>
+          <view class="adm-chart-bar users" style="height: {{item.userH}}%;"></view>
+        </view>
+        <text class="adm-chart-label">{{item.label}}</text>
+      </view>
+    </view>
+
+    <view class="adm-legend">
+      <text class="adm-dot" style="background:#ff5a1f;"></text>
+      <text>任务</text>
+      <text class="adm-dot" style="background:#3c7fff;margin-left:24rpx;"></text>
+      <text>新用户</text>
+    </view>
+  </view>
+
+  <view class="adm-card">
+    <view class="adm-head"><text class="adm-title">快捷入口</text></view>
+    <view
+      class="adm-row shortcut"
+      wx:for="{{shortcuts}}"
+      wx:key="key"
+      data-url="{{item.url}}"
+      bindtap="onShortcut"
+    >
+      <text class="adm-row-title">{{item.name}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+</view>
