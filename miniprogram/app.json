@@ -6,7 +6,8 @@
     "pages/user/index",
     "pages/task/publish/index",
     "pages/task/detail/index",
-    "pages/post/detail/index"
+    "pages/post/detail/index",
+    "pages/agreement/index"
   ],
   "window": {
     "navigationBarTitleText": "任务大厅",

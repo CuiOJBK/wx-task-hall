@@ -1,0 +1,17 @@
+<view class="mask" wx:if="{{visible}}">
+  <view class="sheet">
+    <text class="title">用户协议与隐私保护</text>
+
+    <text class="body">在使用前，请阅读并同意《用户协议》和《隐私政策》。我们会获取你的微信标识用于识别账户，仅在你主动选择任务地点时获取位置信息，不会在后台持续定位。</text>
+
+    <view class="links">
+      <text class="link" data-tab="terms" bindtap="onOpenDoc">《用户协议》</text>
+      <text class="link" data-tab="privacy" bindtap="onOpenDoc">《隐私政策》</text>
+    </view>
+
+    <view class="actions">
+      <view class="btn-ghost" bindtap="onReject">暂不同意</view>
+      <button class="btn-primary" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="onAgree">同意并继续</button>
+    </view>
+  </view>
+</view>

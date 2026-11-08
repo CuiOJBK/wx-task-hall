@@ -1,6 +1,18 @@
 <view class="page">
   <view class="card profile">
-    <view class="avatar">{{avatarText}}</view>
+    <!-- 头像：登录后用官方 chooseAvatar 按钮，未登录只展示占位 -->
+    <button
+      class="avatar-btn"
+      wx:if="{{authorized}}"
+      open-type="chooseAvatar"
+      bindchooseavatar="onChooseAvatar"
+      hover-class="avatar-hover"
+    >
+      <image wx:if="{{user.avatarUrl}}" class="avatar-img" src="{{user.avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="avatar">{{avatarText}}</view>
+    </button>
+    <view wx:else class="avatar">{{avatarText}}</view>
+
     <view class="profile-info">
       <text class="nickname">{{authorized ? (user.nickname || '未设置昵称') : '未登录'}}</text>
       <text class="muted nick-hint" wx:if="{{authorized && profileComplete}}">
@@ -13,26 +25,39 @@
 
   <button class="btn btn-primary login-btn" wx:if="{{!authorized}}" bindtap="onLoginTap">微信一键登录</button>
 
-  <!-- 资料不完整：写操作的解锁入口（V4） -->
-  <view class="card tip-card" wx:if="{{authorized && !profileComplete}}">
-    <text class="tip-title">还差一步</text>
-    <text class="muted tip-desc">设置昵称后即可发布任务、接单和评论</text>
-    <button class="btn btn-primary tip-btn" bindtap="onEditNickname">设置昵称</button>
+  <!-- 账号资料：昵称用官方 nickname 输入控件，头像点上方头像更换 -->
+  <view class="card edit-card" wx:if="{{authorized}}">
+    <text class="edit-title">{{profileComplete ? '修改昵称' : '设置昵称'}}</text>
+    <text class="muted edit-desc">
+      {{profileComplete ? (canChangeNickname ? '昵称只能修改一次，请谨慎填写' : '昵称已修改过，不可再改') : '首次设置昵称不占用修改次数'}}
+    </text>
+
+    <input
+      class="nick-input"
+      type="nickname"
+      value="{{nickInput}}"
+      disabled="{{!canChangeNickname}}"
+      placeholder="点击填写昵称（2-20 字）"
+      maxlength="20"
+      bindinput="onNickInput"
+    />
+
+    <button
+      class="btn btn-primary save-btn"
+      disabled="{{!canChangeNickname}}"
+      bindtap="onSaveNickname"
+    >保存昵称</button>
   </view>
 
   <view class="warn" wx:if="{{loginError}}">登录失败：{{loginError}}　请检查云开发是否开通</view>
 
   <view class="card menu">
-    <view
-      class="menu-item {{canChangeNickname ? '' : 'menu-disabled'}}"
-      wx:if="{{authorized}}"
-      bindtap="onEditNickname"
-    >
-      <text>{{profileComplete ? '修改昵称' : '设置昵称'}}{{profileComplete && canChangeNickname ? '（仅一次）' : ''}}</text>
-      <text class="arrow">{{canChangeNickname ? '›' : '已用完'}}</text>
-    </view>
     <view class="menu-item" bindtap="onGoTasks">
       <text>我的任务</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onOpenAgreement">
+      <text>用户协议与隐私政策</text>
       <text class="arrow">›</text>
     </view>
     <view class="menu-item" bindtap="onAbout">
@@ -42,6 +67,6 @@
   </view>
 
   <view class="muted footer">
-    v0.1.0 骨架版本 · 待实现：实名认证、信用分、钱包、消息通知
+    v0.4.0 · 待实现：实名认证、信用分、消息通知
   </view>
 </view>

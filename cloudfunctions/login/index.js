@@ -30,6 +30,38 @@ function bizError(code, msg) {
   e.code = code
   return e
 }
+/**
+ * 内容安全检测（P0-1）
+ * 命中敏感内容 → CONTENT_RISK；接口不可用/超时 → 放行并记日志，不阻断正常发布
+ * scene: 1 资料 / 2 评论 / 3 论坛 / 4 社交日志
+ */
+async function assertContentSafe(text, openid, scene) {
+  const content = String(text || '').trim()
+  if (!content) return
+  try {
+    const res = await cloud.openapi.security.msgSecCheck({
+      openid,
+      scene: scene || 3,
+      version: 2,
+      content: content.slice(0, 2500)
+    })
+    const errCode = res && res.errCode
+    if (errCode === 87014) {
+      throw bizError('CONTENT_RISK', '内容包含敏感信息，请修改后重试')
+    }
+    if (errCode !== 0) {
+      console.warn('[security] msgSecCheck 异常码', errCode, res && res.errMsg)
+    }
+  } catch (e) {
+    if (e && e.code === 'CONTENT_RISK') throw e
+    console.warn(
+      '[security] msgSecCheck 调用失败，本次放行：',
+      (e && e.errCode) || '',
+      (e && e.errMsg) || (e && e.message) || e
+    )
+  }
+}
+
 
 /** 唯一索引冲突（E11000 duplicate key）判定 */
 function isDuplicateKeyError(e) {
@@ -243,6 +275,8 @@ const ACTIONS = {
       if (!st.allowed) {
         throw bizError('NICKNAME_CHANGE_USED', '昵称只能修改一次，你已经用过了')
       }
+
+      await assertContentSafe(rawNickname, ctx.openid, 1)
 
       const key = nicknameKeyOf(rawNickname)
       const dup = await safeGet(db.collection(C_USERS).where({ nicknameKey: key }).limit(1), [])

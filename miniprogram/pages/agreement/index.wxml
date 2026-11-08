@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="tabs">
+    <view
+      class="tab {{activeKey === item.key ? 'tab-active' : ''}}"
+      wx:for="{{sections}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="onSwitch"
+    >{{item.name}}</view>
+  </view>
+
+  <view class="card doc">
+    <view class="block" wx:for="{{active.blocks}}" wx:for-item="block" wx:key="title">
+      <text class="block-title">{{block.title}}</text>
+      <text class="para" wx:for="{{block.paragraphs}}" wx:for-item="p" wx:key="*this">{{p}}</text>
+    </view>
+
+    <text class="updated muted">更新日期：2026 年 11 月 8 日</text>
+  </view>
+
+  <button class="btn btn-primary back-btn" bindtap="onBack">我已了解</button>
+</view>

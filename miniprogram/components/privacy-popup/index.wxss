@@ -1,0 +1,79 @@
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 999;
+  background: rgba(16, 20, 28, 0.45);
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 40rpx 36rpx calc(32rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1d23;
+  text-align: center;
+}
+
+.body {
+  display: block;
+  margin-top: 24rpx;
+  font-size: 26rpx;
+  line-height: 1.75;
+  color: #4a5058;
+}
+
+.links {
+  margin-top: 20rpx;
+}
+
+.link {
+  font-size: 26rpx;
+  color: #ff5a1f;
+  margin-right: 16rpx;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  margin-top: 40rpx;
+}
+
+.btn-ghost {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #8a8f99;
+  background: #f5f6f8;
+  border-radius: 999rpx;
+  margin-right: 20rpx;
+}
+
+.btn-primary {
+  flex: 1.4;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 28rpx;
+  color: #ffffff;
+  background: #ff5a1f;
+  border-radius: 999rpx;
+  padding: 0;
+  margin: 0;
+}
+
+.btn-primary::after {
+  border: none;
+}

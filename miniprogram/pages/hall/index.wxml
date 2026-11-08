@@ -57,3 +57,5 @@
     <text class="fab-plus">＋</text>
   </view>
 </view>
+
+<privacy-popup />
