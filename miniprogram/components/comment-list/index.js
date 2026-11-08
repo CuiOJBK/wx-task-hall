@@ -27,15 +27,17 @@ Component({
       this.triggerEvent('remove', { id })
     },
 
-    /** 长按：只有自己的评论才弹出删除，别人的静默忽略 */
+    /** 长按：自己的弹删除，别人的弹举报 */
     onLongPress(e) {
       const { id, own } = e.currentTarget.dataset
-      if (!id || Number(own) !== 1) return
+      if (!id) return
+      const isOwn = Number(own) === 1
       wx.showActionSheet({
-        itemList: ['删除'],
-        itemColor: '#ff5a1f',
+        itemList: [isOwn ? '删除' : '举报'],
+        itemColor: isOwn ? '#ff5a1f' : '#4a5058',
         success: (res) => {
-          if (res.tapIndex === 0) this.triggerEvent('remove', { id })
+          if (res.tapIndex !== 0) return
+          this.triggerEvent(isOwn ? 'remove' : 'report', { id })
         },
         fail: () => {}
       })

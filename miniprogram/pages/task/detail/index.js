@@ -16,7 +16,9 @@ Page({
     sending: false,
     acting: false,
     needLogin: false,
-    myOpenid: ''
+    myOpenid: '',
+    reportVisible: false,
+    reportTarget: { type: '', id: '', title: '举报' }
   },
 
   async onLoad(options) {
@@ -65,6 +67,34 @@ Page({
     } finally {
       this.setData({ loading: false })
     }
+  },
+
+  /** 举报任务 */
+  onTapReport() {
+    const task = this.data.task
+    if (!task) return
+    this.setData({
+      reportVisible: true,
+      reportTarget: { type: 'task', id: task._id, title: '举报该任务' }
+    })
+  },
+
+  /** 举报评论 */
+  onReportComment(e) {
+    const { id } = e.detail || {}
+    if (!id) return
+    this.setData({
+      reportVisible: true,
+      reportTarget: { type: 'comment', id, title: '举报该评论' }
+    })
+  },
+
+  onCloseReport() {
+    this.setData({ reportVisible: false })
+  },
+
+  onReportDone() {
+    this.setData({ reportVisible: false })
   },
 
   /** 长按删除自己的评论（主楼会连带删回复） */

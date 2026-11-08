@@ -20,6 +20,7 @@
         <text class="like-icon">{{post.liked ? '❤️' : '🤍'}}</text>
         <text class="like-num">{{post.likeCount || 0}}</text>
       </view>
+      <text class="report-link" wx:if="{{post.openid !== myOpenid}}" bindtap="onTapReport">举报</text>
     </view>
   </view>
 
@@ -34,13 +35,23 @@
       empty-text="还没有回复"
       bind:reply="onReply"
       bind:remove="onRemoveComment"
+      bind:report="onReportComment"
     />
   </view>
 
   <view class="bottom-space"></view>
 
   <!-- 底部输入条：文本 + emoji 面板 -->
-  <comment-bar
+  <report-sheet
+  visible="{{reportVisible}}"
+  target-type="{{reportTarget.type}}"
+  target-id="{{reportTarget.id}}"
+  title="{{reportTarget.title}}"
+  bind:close="onCloseReport"
+  bind:done="onReportDone"
+/>
+
+<comment-bar
     value="{{text}}"
     reply-to="{{replyTo}}"
     sending="{{sending}}"

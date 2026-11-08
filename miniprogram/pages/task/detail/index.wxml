@@ -75,6 +75,11 @@
     </view>
   </view>
 
+  <!-- 举报入口：只看别人的任务 -->
+  <view class="report-row" wx:if="{{!permissions.isOwner}}" bindtap="onTapReport">
+    <text class="report-text">举报该任务</text>
+  </view>
+
   <!-- 评论区 -->
   <view class="card">
     <view class="row comment-head">
@@ -86,13 +91,23 @@
       owner-openid="{{myOpenid}}"
       bind:reply="onReply"
       bind:remove="onRemoveComment"
+      bind:report="onReportComment"
     />
   </view>
 
   <view class="bottom-space"></view>
 
   <!-- 底部输入条：文本 + emoji 面板，组件内部处理光标插入 -->
-  <comment-bar
+  <report-sheet
+  visible="{{reportVisible}}"
+  target-type="{{reportTarget.type}}"
+  target-id="{{reportTarget.id}}"
+  title="{{reportTarget.title}}"
+  bind:close="onCloseReport"
+  bind:done="onReportDone"
+/>
+
+<comment-bar
     value="{{commentText}}"
     reply-to="{{replyTo}}"
     sending="{{sending}}"

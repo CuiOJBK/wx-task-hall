@@ -1,3 +1,13 @@
+.report-row {
+  text-align: right;
+  padding: 0 8rpx 24rpx;
+}
+
+.report-text {
+  font-size: 24rpx;
+  color: #9aa0a8;
+}
+
 .detail-page {
   padding-bottom: 200rpx;
 }

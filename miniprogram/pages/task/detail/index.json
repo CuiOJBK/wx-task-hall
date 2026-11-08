@@ -3,6 +3,7 @@
   "enablePullDownRefresh": true,
   "usingComponents": {
     "comment-list": "/components/comment-list/index",
-    "comment-bar": "/components/comment-bar/index"
+    "comment-bar": "/components/comment-bar/index",
+    "report-sheet": "/components/report-sheet/index"
   }
 }

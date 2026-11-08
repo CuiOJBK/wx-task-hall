@@ -1,0 +1,80 @@
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 900;
+  background: rgba(16, 20, 28, 0.45);
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 32rpx 32rpx calc(32rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1d23;
+}
+
+.close {
+  font-size: 26rpx;
+  color: #8a8f99;
+}
+
+.label {
+  display: block;
+  margin: 28rpx 0 16rpx;
+  font-size: 26rpx;
+  color: #4a5058;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 14rpx 24rpx;
+  margin: 0 16rpx 16rpx 0;
+  background: #f5f6f8;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #4a5058;
+}
+
+.chip-on {
+  background: #fff2ec;
+  color: #ff5a1f;
+  border: 1rpx solid #ffcdb8;
+}
+
+.detail {
+  width: 100%;
+  min-height: 120rpx;
+  background: #f5f6f8;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  font-size: 26rpx;
+  box-sizing: border-box;
+}
+
+.submit {
+  margin-top: 32rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 28rpx;
+}

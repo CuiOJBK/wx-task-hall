@@ -1,0 +1,33 @@
+<view class="mask" wx:if="{{visible}}">
+  <view class="sheet">
+    <view class="head">
+      <text class="title">{{title}}</text>
+      <text class="close" bindtap="onClose">关闭</text>
+    </view>
+
+    <text class="label">选择理由</text>
+    <view class="chips">
+      <view
+        class="chip {{reasonIndex === index ? 'chip-on' : ''}}"
+        wx:for="{{reasons}}"
+        wx:key="*this"
+        data-index="{{index}}"
+        bindtap="onSelectReason"
+      >{{item}}</view>
+    </view>
+
+    <text class="label">补充说明（选填）</text>
+    <textarea
+      class="detail"
+      value="{{detail}}"
+      maxlength="200"
+      placeholder="可以描述具体情况，便于我们核实"
+      bindinput="onDetailInput"
+      auto-height
+    />
+
+    <button class="btn btn-primary submit" bindtap="onSubmit" disabled="{{submitting}}">
+      {{submitting ? '提交中…' : '提交举报'}}
+    </button>
+  </view>
+</view>

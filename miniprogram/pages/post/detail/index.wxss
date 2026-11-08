@@ -35,6 +35,12 @@
   word-break: break-all;
 }
 
+.report-link {
+  margin-left: 24rpx;
+  font-size: 24rpx;
+  color: #9aa0a8;
+}
+
 .post-actions {
   display: flex;
   justify-content: flex-end;

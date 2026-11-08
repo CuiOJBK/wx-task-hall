@@ -8,7 +8,7 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 
-const COLLECTIONS = ['tasks', 'comments', 'posts', 'users', 'likes']
+const COLLECTIONS = ['tasks', 'comments', 'posts', 'users', 'likes', 'reports']
 
 /**
  * 管理员白名单（逗号分隔的 openid）

@@ -14,7 +14,9 @@ Page({
     loading: true,
     sending: false,
     needLogin: false,
-    myOpenid: ''
+    myOpenid: '',
+    reportVisible: false,
+    reportTarget: { type: '', id: '', title: '举报' }
   },
 
   async onLoad(options) {
@@ -54,6 +56,34 @@ Page({
     } finally {
       this.setData({ loading: false })
     }
+  },
+
+  /** 举报话题 */
+  onTapReport() {
+    const post = this.data.post
+    if (!post) return
+    this.setData({
+      reportVisible: true,
+      reportTarget: { type: 'post', id: post._id, title: '举报该话题' }
+    })
+  },
+
+  /** 举报回复 */
+  onReportComment(e) {
+    const { id } = e.detail || {}
+    if (!id) return
+    this.setData({
+      reportVisible: true,
+      reportTarget: { type: 'comment', id, title: '举报该回复' }
+    })
+  },
+
+  onCloseReport() {
+    this.setData({ reportVisible: false })
+  },
+
+  onReportDone() {
+    this.setData({ reportVisible: false })
   },
 
   /** 长按删除自己的回复 */
