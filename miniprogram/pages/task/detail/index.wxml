@@ -77,7 +77,7 @@
 
   <!-- 举报入口：只看别人的任务 -->
   <view class="report-row" wx:if="{{!permissions.isOwner}}" bindtap="onTapReport">
-    <text class="report-text">举报该任务</text>
+    <text class="report-text">⚠️ 举报该任务</text>
   </view>
 
   <!-- 评论区 -->

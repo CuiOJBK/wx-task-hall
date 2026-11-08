@@ -20,7 +20,7 @@
         <text class="like-icon">{{post.liked ? '❤️' : '🤍'}}</text>
         <text class="like-num">{{post.likeCount || 0}}</text>
       </view>
-      <text class="report-link" wx:if="{{post.openid !== myOpenid}}" bindtap="onTapReport">举报</text>
+      <text class="report-link" wx:if="{{post.openid !== myOpenid}}" bindtap="onTapReport">⚠️ 举报</text>
     </view>
   </view>
 

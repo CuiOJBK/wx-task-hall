@@ -27,6 +27,13 @@ Component({
       this.triggerEvent('remove', { id })
     },
 
+    /** 点「举报」文字（别人的主楼才会渲染） */
+    onReportTap(e) {
+      const { id } = e.currentTarget.dataset
+      if (!id) return
+      this.triggerEvent('report', { id })
+    },
+
     /** 长按：自己的弹删除，别人的弹举报 */
     onLongPress(e) {
       const { id, own } = e.currentTarget.dataset

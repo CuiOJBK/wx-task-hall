@@ -27,6 +27,12 @@
           data-id="{{item._id}}"
           bindtap="onDeleteTap"
         >删除</text>
+        <text
+          class="report-btn"
+          wx:elif="{{ownerOpenid}}"
+          data-id="{{item._id}}"
+          bindtap="onReportTap"
+        >举报</text>
       </view>
 
       <!-- 二级回复：只渲染一层，不递归，避免无限嵌套 -->
