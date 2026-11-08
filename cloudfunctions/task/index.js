@@ -474,6 +474,15 @@ async function cancelTask(data, ctx) {
   })
 }
 
+/** 我的任务支持的状态筛选：一个筛选项可对应多个真实状态 */
+const MINE_FILTERS = {
+  all: [],
+  pending: [STATUS.PENDING],
+  running: [STATUS.ACCEPTED, STATUS.CONFIRMING],
+  completed: [STATUS.COMPLETED],
+  cancelled: [STATUS.CANCELLED]
+}
+
 async function mineTasks(data, ctx) {
   await requireActiveUser(ctx)
   const role = data.role === 'taker' ? 'taker' : 'owner'
@@ -481,11 +490,19 @@ async function mineTasks(data, ctx) {
   const page = Math.max(Number(data.page) || 0, 0)
   const where = role === 'taker' ? { takerOpenid: ctx.openid } : { ownerOpenid: ctx.openid }
 
+  const filter = String(data.filter || 'all')
+  const statusList = MINE_FILTERS[filter] || []
+  if (statusList.length === 1) {
+    where.status = statusList[0]
+  } else if (statusList.length > 1) {
+    where.status = _.in(statusList)
+  }
+
   const rows = await safeGet(
     db.collection(C_TASK).where(where).orderBy('createdAt', 'desc').skip(page * limit).limit(limit + 1),
     []
   )
-  return { list: rows.slice(0, limit), hasMore: rows.length > limit }
+  return { list: rows.slice(0, limit), hasMore: rows.length > limit, filter }
 }
 
 /** 公开设置：仅暴露前端需要的字段，不需要管理员权限 */

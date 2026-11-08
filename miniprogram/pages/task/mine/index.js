@@ -7,10 +7,20 @@ const ROLES = [
   { key: 'taker', label: '我接的单' }
 ]
 
+const FILTERS = [
+  { key: 'all', label: '全部' },
+  { key: 'pending', label: '待接单' },
+  { key: 'running', label: '进行中' },
+  { key: 'completed', label: '已完成' },
+  { key: 'cancelled', label: '已取消' }
+]
+
 Page({
   data: {
     roles: ROLES,
+    filters: FILTERS,
     role: 'owner',
+    filter: 'all',
     list: [],
     loading: false,
     finished: false,
@@ -49,6 +59,13 @@ Page({
     const { key } = e.currentTarget.dataset
     if (key === this.data.role) return
     this.setData({ role: key })
+    this.refresh()
+  },
+
+  onSwitchFilter(e) {
+    const { key } = e.currentTarget.dataset
+    if (key === this.data.filter) return
+    this.setData({ filter: key })
     this.refresh()
   },
 

@@ -37,3 +37,30 @@
 .guide-btn {
   margin-top: 40rpx;
 }
+
+/* 状态筛选：次要层级，比角色 Tab 轻 */
+.filters {
+  display: flex;
+  white-space: nowrap;
+  margin-bottom: 16rpx;
+  width: 100%;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  height: 56rpx;
+  padding: 0 22rpx;
+  margin-right: 12rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+  font-size: 24rpx;
+  color: #8a8f99;
+  flex-shrink: 0;
+}
+
+.filter.on {
+  background: #fff2ec;
+  color: #ff5a1f;
+  font-weight: 500;
+}

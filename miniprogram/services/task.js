@@ -86,6 +86,8 @@ async function cancelTask(id) {
 async function myTasks(role = 'owner', p = {}) {
   const res = await call('task', 'mine', {
     role,
+    // all / pending / running / completed / cancelled
+    filter: p.filter || 'all',
     page: p.page || 0,
     pageSize: p.pageSize || config.pageSize
   })
