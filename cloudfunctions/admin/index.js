@@ -517,6 +517,8 @@ const ACTIONS = {
         reporterOpenid: r.reporterOpenid || '',
         status: r.status || 'pending',
         handleAction: r.handleAction || '',
+        handleNote: r.handleNote || '',
+        handledAt: r.handledAt || null,
         createdAt: r.createdAt
       })),
       hasMore: rows.length > limit

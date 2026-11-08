@@ -19,3 +19,28 @@
 .adm-nav-item {
   margin-right: 12rpx;
 }
+
+.brief {
+  background: #f5f6f8;
+  border-radius: 14rpx;
+  padding: 18rpx 20rpx;
+  margin-bottom: 24rpx;
+}
+
+.adm-row-meta.note {
+  color: #5a6069;
+}
+
+.adm-nav-item.on-danger {
+  background: #e0483c;
+  color: #ffffff;
+}
+
+.danger-tip {
+  color: #e0483c;
+  margin-bottom: 8rpx;
+}
+
+.adm-submit.danger {
+  background: #e0483c;
+}

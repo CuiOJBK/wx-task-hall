@@ -25,7 +25,15 @@ Page({
     list: [],
     loading: false,
     hasMore: true,
-    page: 0
+    page: 0,
+    // 处置弹层
+    handleVisible: false,
+    handleId: '',
+    handleTarget: null,
+    handleAction: '',
+    handleNote: '',
+    handleError: '',
+    submitting: false
   },
 
   onLoad() {
@@ -66,7 +74,9 @@ Page({
         typeText: TYPE_TEXT[r.targetType] || r.targetType,
         statusText: STATUS_TEXT[r.status] || r.status,
         timeText: this.formatTime(r.createdAt),
-        canHandle: r.status === 'pending' || !r.status
+        canHandle: r.status === 'pending' || !r.status,
+        noteText: r.handleNote || '',
+        handledText: r.handledAt ? this.formatTime(r.handledAt) : ''
       }))
       this.setData({
         list: reset ? rows : this.data.list.concat(rows),
@@ -107,37 +117,83 @@ Page({
     })
   },
 
-  async onHandle(e) {
+  /** 打开处置弹层（预选动作，可改） */
+  onOpenHandle(e) {
     const { id, action } = e.currentTarget.dataset
-    if (!id || !action) return
-
-    const label = { resolve: '标记已处理', ignore: '忽略该举报', remove: '删除被举报内容' }[action]
-    const extra =
-      action === 'remove'
-        ? '内容将被物理删除，且不可恢复。'
-        : '同一内容下的其他待处理举报会一并结案。'
-
-    const confirmed = await new Promise((resolve) => {
-      wx.showModal({
-        title: label,
-        content: extra,
-        confirmText: '确定',
-        confirmColor: action === 'remove' ? '#e0483c' : '#ff5a1f',
-        success: (r) => resolve(r.confirm),
-        fail: () => resolve(false)
-      })
+    const item = this.data.list.find((r) => r._id === id)
+    if (!item) return
+    this.setData({
+      handleVisible: true,
+      handleId: id,
+      handleTarget: item,
+      handleAction: action || 'resolve',
+      handleNote: '',
+      handleError: ''
     })
-    if (!confirmed) return
+  },
 
+  onPickAction(e) {
+    this.setData({
+      handleAction: e.currentTarget.dataset.action,
+      handleError: ''
+    })
+  },
+
+  onNoteInput(e) {
+    this.setData({ handleNote: e.detail.value })
+  },
+
+  onCloseHandle() {
+    if (this.data.submitting) return
+    this.setData({ handleVisible: false })
+  },
+
+  async onSubmitHandle() {
+    if (this.data.submitting) return
+
+    const { handleId, handleAction, handleNote } = this.data
+    if (!handleAction) {
+      this.setData({ handleError: '请选择处置方式' })
+      return
+    }
+    if (String(handleNote || '').length > 200) {
+      this.setData({ handleError: '备注最多 200 字' })
+      return
+    }
+
+    // 删除内容不可恢复，单独再确认一次
+    if (handleAction === 'remove') {
+      const confirmed = await new Promise((resolve) => {
+        wx.showModal({
+          title: '删除被举报内容',
+          content: '内容将被物理删除，任务/话题下的评论一并清除，不可恢复。',
+          confirmText: '删除',
+          confirmColor: '#e0483c',
+          success: (r) => resolve(r.confirm),
+          fail: () => resolve(false)
+        })
+      })
+      if (!confirmed) return
+    }
+
+    this.setData({ submitting: true })
     wx.showLoading({ title: '处理中', mask: true })
     try {
-      await admin.reportHandle({ id, action })
+      await admin.reportHandle({
+        id: handleId,
+        action: handleAction,
+        note: (handleNote || '').trim()
+      })
       wx.hideLoading()
-      wx.showToast({ title: '已处理', icon: 'success' })
+      wx.showToast({ title: '已处置', icon: 'success' })
+      this.setData({ handleVisible: false, submitting: false })
       this.reload()
     } catch (err) {
       wx.hideLoading()
+      this.setData({ submitting: false })
       showError(err, '处理失败')
     }
-  }
+  },
+
+  noop() {}
 })

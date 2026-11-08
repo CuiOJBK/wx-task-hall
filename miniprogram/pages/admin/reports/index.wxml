@@ -20,15 +20,16 @@
       <text class="adm-row-meta">理由：{{item.reason}}</text>
       <text class="adm-row-meta" wx:if="{{item.detail}}">补充：{{item.detail}}</text>
       <text class="adm-row-meta">举报人：{{item.reporterNickname || item.reporterOpenid}} · {{item.timeText}}</text>
-      <text class="adm-row-meta" wx:if="{{!item.canHandle}}">处理结果：{{item.statusText}}</text>
+      <text class="adm-row-meta" wx:if="{{!item.canHandle}}">处理结果：{{item.statusText}}{{item.handledText ? ' · ' + item.handledText : ''}}</text>
+      <text class="adm-row-meta note" wx:if="{{item.noteText}}">处置备注：{{item.noteText}}</text>
     </view>
 
     <view class="adm-row-ops">
       <text class="adm-op" data-item="{{item}}" bindtap="onView">查看内容</text>
       <block wx:if="{{item.canHandle}}">
-        <text class="adm-op" data-id="{{item._id}}" data-action="resolve" bindtap="onHandle">标记已处理</text>
-        <text class="adm-op" data-id="{{item._id}}" data-action="ignore" bindtap="onHandle">忽略</text>
-        <text class="adm-op danger" data-id="{{item._id}}" data-action="remove" bindtap="onHandle">删除内容</text>
+        <text class="adm-op" data-id="{{item._id}}" data-action="resolve" bindtap="onOpenHandle">标记已处理</text>
+        <text class="adm-op" data-id="{{item._id}}" data-action="ignore" bindtap="onOpenHandle">忽略</text>
+        <text class="adm-op danger" data-id="{{item._id}}" data-action="remove" bindtap="onOpenHandle">删除内容</text>
       </block>
     </view>
   </view>
@@ -38,4 +39,50 @@
   </view>
   <view class="adm-loading" wx:if="{{loading}}">加载中…</view>
   <view class="adm-more" wx:if="{{hasMore && !loading}}" bindtap="loadMore">加载更多</view>
+
+  <!-- 处置弹层：选动作 + 填备注，一次提交 -->
+  <view class="adm-mask" wx:if="{{handleVisible}}" catchtap="onCloseHandle">
+    <view class="adm-sheet" catchtap="noop">
+      <view class="adm-sheet-head">
+        <text class="adm-title">处置举报</text>
+        <text class="adm-sub" bindtap="onCloseHandle">关闭</text>
+      </view>
+
+      <view class="brief">
+        <text class="adm-sub">目标：{{handleTarget.typeText}} · {{handleTarget.targetSnapshot || '（无快照）'}}</text>
+        <text class="adm-sub">理由：{{handleTarget.reason}}</text>
+        <text class="adm-sub" wx:if="{{handleTarget.detail}}">补充：{{handleTarget.detail}}</text>
+      </view>
+
+      <view class="adm-field">
+        <text class="adm-label">处置方式</text>
+        <view class="adm-filter">
+          <view class="adm-nav-item {{handleAction === 'resolve' ? 'on' : ''}}" data-action="resolve" bindtap="onPickAction">标记已处理</view>
+          <view class="adm-nav-item {{handleAction === 'ignore' ? 'on' : ''}}" data-action="ignore" bindtap="onPickAction">忽略</view>
+          <view class="adm-nav-item {{handleAction === 'remove' ? 'on-danger' : ''}}" data-action="remove" bindtap="onPickAction">删除内容</view>
+        </view>
+        <text class="adm-error" wx:if="{{handleError}}">{{handleError}}</text>
+      </view>
+
+      <view class="adm-field">
+        <text class="adm-label">处置备注（选填，最多 200 字）</text>
+        <textarea
+          class="adm-textarea"
+          value="{{handleNote}}"
+          bindinput="onNoteInput"
+          maxlength="200"
+          placeholder="例如：内容含广告，已删除；或：经核实为正常内容"
+        />
+        <text class="adm-sub" style="margin-top:8rpx;">备注会写入操作日志，便于事后追溯。</text>
+      </view>
+
+      <text class="adm-sub danger-tip" wx:if="{{handleAction === 'remove'}}">
+        删除后不可恢复，任务/话题下的评论会一并清除。
+      </text>
+
+      <button class="adm-submit {{handleAction === 'remove' ? 'danger' : ''}}" bindtap="onSubmitHandle" disabled="{{submitting}}">
+        {{submitting ? '提交中…' : '提交处置'}}
+      </button>
+    </view>
+  </view>
 </view>
