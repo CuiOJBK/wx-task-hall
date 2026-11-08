@@ -17,6 +17,21 @@ const _ = db.command
 
 const C_TASK = 'tasks'
 const C_USER = 'users'
+const C_SETTING = 'settings'
+
+/** 平台默认设置，与后台 settings 默认值保持一致 */
+const DEFAULT_SETTINGS = { maxReward: 500, allowPublish: true, announcement: '' }
+
+/** 读取平台设置（settings 集合单文档 key='global'） */
+async function getPlatformSettings() {
+  const rows = await safeGet(db.collection(C_SETTING).where({ key: 'global' }).limit(1), [])
+  const v = (rows[0] && rows[0].value) || {}
+  return {
+    maxReward: typeof v.maxReward === 'number' ? v.maxReward : DEFAULT_SETTINGS.maxReward,
+    allowPublish: v.allowPublish !== false,
+    announcement: String(v.announcement || '')
+  }
+}
 
 /** 匿名可见条数上限（规则 L1） */
 const ANON_LIMIT = 10
@@ -184,6 +199,16 @@ async function createTask(data, ctx) {
   const reward = Number(data.reward || 0)
   assert(!Number.isNaN(reward) && reward >= 0, 'INVALID_PARAM', '赏金需为不小于 0 的数字')
 
+  const desc = (data.desc || '').trim().slice(0, 500)
+
+  const platform = await getPlatformSettings()
+  assert(platform.allowPublish, 'PUBLISH_DISABLED', '平台当前暂停发布任务，请稍后再试')
+  assert(
+    reward <= platform.maxReward,
+    'INVALID_PARAM',
+    `赏金不能超过 ${platform.maxReward} 元`
+  )
+
   let location = null
   let geo = null
   if (data.location && data.location.latitude != null && data.location.longitude != null) {
@@ -205,7 +230,7 @@ async function createTask(data, ctx) {
   const now = db.serverDate()
   const doc = {
     title,
-    desc: (data.desc || '').trim().slice(0, 500),
+    desc,
     reward,
     contact: (data.contact || '').trim().slice(0, 40),
     location,
@@ -418,8 +443,14 @@ async function mineTasks(data, ctx) {
   return { list: rows.slice(0, limit), hasMore: rows.length > limit }
 }
 
+/** 公开设置：仅暴露前端需要的字段，不需要管理员权限 */
+async function publicSettings(data, ctx) {
+  return getPlatformSettings()
+}
+
 const ACTIONS = {
   create: createTask,
+  settings: publicSettings,
   list: listTasks,
   detail: detailTask,
   grab: grabTask,

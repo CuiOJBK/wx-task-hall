@@ -46,6 +46,12 @@ async function getTask(id) {
   }
 }
 
+/** 平台公开设置：赏金上限 / 是否允许发布 / 公告 */
+async function getSettings() {
+  const res = await call('task', 'settings', {})
+  return res.data
+}
+
 async function createTask(payload) {
   const res = await call('task', 'create', payload)
   return res.data
@@ -86,6 +92,7 @@ async function myTasks(role = 'owner', p = {}) {
 }
 
 module.exports = {
+  getSettings,
   listTasks,
   getTask,
   createTask,

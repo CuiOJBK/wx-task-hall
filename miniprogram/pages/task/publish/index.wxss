@@ -7,6 +7,12 @@
   border-bottom: none;
 }
 
+.hint {
+  font-size: 22rpx;
+  color: #9aa0a8;
+  margin-left: 12rpx;
+}
+
 .label {
   font-size: 26rpx;
   color: #5a6069;

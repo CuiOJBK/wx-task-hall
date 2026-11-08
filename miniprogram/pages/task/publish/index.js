@@ -13,7 +13,9 @@ Page({
     location: null,
     locationText: '',
     submitting: false,
-    mapEnabled: config.features.mapPicker
+    mapEnabled: config.features.mapPicker,
+    // 平台设置：赏金上限 / 是否允许发布 / 公告
+    platform: { maxReward: 500, allowPublish: true, announcement: '' }
   },
 
   async onLoad() {
@@ -25,7 +27,32 @@ Page({
     }
     // V4：资料不完整先让用户设昵称，别等填完表单才被拒
     const profileOk = await ensureProfile({ title: '先完善昵称再发布' })
-    if (!profileOk) wx.navigateBack()
+    if (!profileOk) {
+      wx.navigateBack()
+      return
+    }
+
+    await this.loadPlatformSettings()
+  },
+
+  /** 读取平台设置（公开接口，无需管理员） */
+  async loadPlatformSettings() {
+    try {
+      const d = await taskService.getSettings()
+      this.setData({ platform: d })
+      if (!d.allowPublish) {
+        wx.showModal({
+          title: '暂停发布',
+          content: '平台当前暂停发布新任务，请稍后再来。',
+          showCancel: false,
+          confirmText: '返回',
+          success: () => wx.navigateBack()
+        })
+      }
+    } catch (e) {
+      // 设置读取失败不阻断发布，服务端仍会兜底校验
+      console.warn('[publish] 读取平台设置失败', e.message)
+    }
   },
 
   onInput(e) {
@@ -51,13 +78,18 @@ Page({
   },
 
   validate() {
-    const { title, reward } = this.data
+    const { title, reward, platform } = this.data
     if (!title || title.trim().length < 4) {
       wx.showToast({ title: '标题至少 4 个字', icon: 'none' })
       return false
     }
     if (reward !== '' && (Number.isNaN(Number(reward)) || Number(reward) < 0)) {
       wx.showToast({ title: '赏金需为不小于 0 的数字', icon: 'none' })
+      return false
+    }
+    const max = Number(platform.maxReward)
+    if (reward !== '' && !Number.isNaN(max) && Number(reward) > max) {
+      wx.showToast({ title: `赏金不能超过 ${max} 元`, icon: 'none' })
       return false
     }
     return true

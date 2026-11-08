@@ -21,7 +21,9 @@ Page({
     locating: false,
     // 匿名模式：只渲染前 10 条摘要，切换筛选/发布/看详情都要登录
     anonymous: true,
-    loginError: ''
+    loginError: '',
+    announcement: '',
+    platform: null
   },
 
   onLoad() {
@@ -31,6 +33,7 @@ Page({
         anonymous: !app.globalData.authorized,
         loginError: app.globalData.loginError
       })
+      this.loadAnnouncement()
       this.refresh()
     })
     this.tryLocate()
@@ -54,6 +57,19 @@ Page({
 
   onHide() {
     this._needRefresh = true
+  },
+
+  /** 读取平台公告与发布开关（公开设置接口） */
+  async loadAnnouncement() {
+    try {
+      const d = await taskService.getSettings()
+      this.setData({
+        announcement: d.announcement || '',
+        platform: d
+      })
+    } catch (e) {
+      console.warn('[hall] 读取平台设置失败', e.message)
+    }
   },
 
   /** 静默获取当前位置；匿名不参与距离排序（避免反推坐标） */
@@ -145,6 +161,10 @@ Page({
   },
 
   async onPublish() {
+    if (this.data.platform && this.data.platform.allowPublish === false) {
+      wx.showToast({ title: '平台暂停发布，请稍后再试', icon: 'none' })
+      return
+    }
     if (this.data.anonymous) {
       const ok = await ensureAuthorized({ title: '登录后才能发布任务' })
       if (!ok) return

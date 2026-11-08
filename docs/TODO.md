@@ -49,7 +49,7 @@
 | P2-2 | 信用分体系 | `users.creditScore` 字段已预留（默认 100）。接单完成 +2、超时未完成 -5、被投诉 -10，低于阈值限制接单 | HYF-2005/xiaoyuanyiyuan 的信用分结算 |
 | P2-3 | 实名认证 / 保证金 | 接单前需认证，防止放鸽子。保证金用 `users.deposit` + 退款审核流程 | Big-Monster-H/order-self-miniprogram 的保证金机制 |
 | P2-4 | 后端迁移 | 数据量或结算复杂度超了云开发，再迁 Spring Boot / NestJS。**建议路径**：先保持云函数接口形状（`{action, data}` → `{code,data,msg}`）不变，前端 `services/*.js` 只改 `cloud.js` 一处即可切换 | fuu-run（Spring Boot）、order-self-miniprogram（NestJS） |
-| P2-5 | 管理后台 | **✅ 已完成**：小程序内 7 个模块（概览/用户/举报/内容/角色/日志/设置），含举报处置闭环，见 `docs/admin.md` | 待补：设置项接入业务校验、PC 端（如需） |
+| P2-5 | 管理后台 | **✅ 已完成**：小程序内 7 个模块（概览/用户/举报/内容/角色/日志/设置），含举报处置闭环；设置项已接入发布校验 | 待补：PC 端（如需） |
 | P2-6 | 客服与申诉工单 | 任务纠纷（说做了甲方不认）必须有仲裁入口，否则做不大 | fuu-run 的 order appeal 页面 |
 
 ---

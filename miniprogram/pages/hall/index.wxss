@@ -1,3 +1,26 @@
+.notice {
+  display: flex;
+  align-items: flex-start;
+  background: #fffbe8;
+  border: 1rpx solid #ffe9b8;
+  border-radius: 16rpx;
+  padding: 18rpx 22rpx;
+  margin-bottom: 16rpx;
+}
+
+.notice-icon {
+  font-size: 26rpx;
+  margin-right: 12rpx;
+  line-height: 1.6;
+}
+
+.notice-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #8a6d1f;
+  line-height: 1.6;
+}
+
 .login-bar {
   display: flex;
   align-items: center;

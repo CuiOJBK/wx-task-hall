@@ -8,6 +8,12 @@
     <view class="login-bar-btn" bindtap="onLoginTap">微信一键登录</view>
   </view>
 
+  <!-- 平台公告 -->
+  <view class="notice" wx:if="{{announcement}}">
+    <text class="notice-icon">📢</text>
+    <text class="notice-text">{{announcement}}</text>
+  </view>
+
   <!-- 顶部状态切换 -->
   <view class="tabs">
     <view
