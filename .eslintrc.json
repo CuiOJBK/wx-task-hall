@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "env": {
+    "es2021": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "script"
+  },
+  "globals": {
+    "wx": "readonly",
+    "App": "readonly",
+    "Page": "readonly",
+    "Component": "readonly",
+    "Behavior": "readonly",
+    "getApp": "readonly",
+    "getCurrentPages": "readonly"
+  },
+  "rules": {
+    "no-undef": "error",
+    "no-redeclare": "error",
+    "no-dupe-keys": "error",
+    "no-unreachable": "error",
+    "no-const-assign": "error",
+    "no-func-assign": "error",
+    "no-unused-vars": ["warn", { "args": "none", "ignoreRestSiblings": true }]
+  },
+  "ignorePatterns": ["node_modules/", "miniprogram_npm/"]
+}

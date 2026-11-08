@@ -2,7 +2,7 @@ const postService = require('../../../services/post')
 const { showError } = require('../../../utils/ui')
 const commentService = require('../../../services/comment')
 const { COMMENT_TARGET } = require('../../../utils/constants')
-const { ensureAuthorized, loginDirect } = require('../../../utils/auth')
+const { loginDirect } = require('../../../utils/auth')
 
 Page({
   data: {

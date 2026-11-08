@@ -1,6 +1,6 @@
 const taskService = require('../../../services/task')
 const { showError } = require('../../../utils/ui')
-const { ensureAuthorized, loginDirect } = require('../../../utils/auth')
+const { loginDirect } = require('../../../utils/auth')
 
 const ROLES = [
   { key: 'owner', label: '我发布的' },

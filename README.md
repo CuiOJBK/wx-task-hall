@@ -189,6 +189,20 @@ canGrab / canSubmit / canConfirm / canCancel / canViewContact
 
 ---
 
+## 四·五、代码质量检查（npm scripts）
+
+```bash
+npm install          # 首次，装 eslint
+npm run lint         # ESLint：no-undef / no-redeclare / no-unused-vars 等
+npm run check        # 项目自检：页面四件套、组件引用、require 路径
+npm run test         # 4 组单测：emoji / 键盘 / 地址 / 昵称
+npm run verify       # 上面三个一起跑
+```
+
+**为什么必须有 lint**：`node --check` 只查语法，查不出「引用了不存在的变量」。
+项目曾因此把 `task.create` 写挂（`desc` 未定义），发任务一直失败却只在运行时暴露。
+`no-undef` 能在提交前拦住这类问题。
+
 ## 五、验证框架能跑：逐项对照
 
 跑之前先自检一遍（可选但推荐）：

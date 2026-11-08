@@ -1,0 +1,15 @@
+{
+  "name": "task-hall-miniprogram",
+  "version": "0.4.0",
+  "private": true,
+  "description": "微信小程序任务接单系统（原生小程序 + 微信云开发）",
+  "scripts": {
+    "lint": "eslint \"miniprogram/**/*.js\" \"cloudfunctions/**/*.js\" \"scripts/*.js\"",
+    "check": "node scripts/check-project.js",
+    "test": "node scripts/test-emoji.js && node scripts/test-keyboard.js && node scripts/test-region.js && node scripts/test-nickname.js",
+    "verify": "npm run lint && npm run check && npm run test"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1"
+  }
+}

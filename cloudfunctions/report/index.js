@@ -74,13 +74,6 @@ async function requireActiveUser(ctx) {
   return user
 }
 
-function adminOpenids() {
-  return String(process.env.ADMIN_OPENIDS || '')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean)
-}
-
 async function getTarget(targetType, targetId) {
   try {
     const r = await db.collection(TARGETS[targetType]).doc(targetId).get()
