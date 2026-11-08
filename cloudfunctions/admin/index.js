@@ -33,7 +33,8 @@ const DEFAULT_SETTINGS = {
   maxReward: 500,
   reportThreshold: 3,
   announcement: '',
-  allowPublish: true
+  allowPublish: true,
+  acceptTimeoutHours: 24
 }
 
 const ok = (data) => ({ code: 0, data, msg: 'ok' })
@@ -605,11 +606,21 @@ const ACTIONS = {
       '举报阈值需为 1-100'
     )
 
+    const acceptTimeoutHours = Number(
+      input.acceptTimeoutHours === undefined ? 24 : input.acceptTimeoutHours
+    )
+    assert(
+      !Number.isNaN(acceptTimeoutHours) && acceptTimeoutHours >= 1 && acceptTimeoutHours <= 168,
+      'INVALID_PARAM',
+      '接单超时小时数需为 1-168'
+    )
+
     const value = {
       maxReward,
       reportThreshold,
       announcement: String(input.announcement || '').slice(0, 200),
-      allowPublish: input.allowPublish !== false
+      allowPublish: input.allowPublish !== false,
+      acceptTimeoutHours
     }
 
     const rows = await safeGet(db.collection(C_SETTING).where({ key: 'global' }).limit(1), [])

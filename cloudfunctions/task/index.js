@@ -24,16 +24,21 @@ const C_IMAGE_CHECK = 'image_checks'
 const MAX_IMAGES = 3
 
 /** 平台默认设置，与后台 settings 默认值保持一致 */
-const DEFAULT_SETTINGS = { maxReward: 500, allowPublish: true, announcement: '' }
+const DEFAULT_SETTINGS = { maxReward: 500, allowPublish: true, announcement: '', acceptTimeoutHours: 24 }
 
 /** 读取平台设置（settings 集合单文档 key='global'） */
 async function getPlatformSettings() {
   const rows = await safeGet(db.collection(C_SETTING).where({ key: 'global' }).limit(1), [])
   const v = (rows[0] && rows[0].value) || {}
+  const timeoutHours = Number(v.acceptTimeoutHours)
   return {
     maxReward: typeof v.maxReward === 'number' ? v.maxReward : DEFAULT_SETTINGS.maxReward,
     allowPublish: v.allowPublish !== false,
-    announcement: String(v.announcement || '')
+    announcement: String(v.announcement || ''),
+    acceptTimeoutHours:
+      Number.isNaN(timeoutHours) || timeoutHours < 1 || timeoutHours > 168
+        ? DEFAULT_SETTINGS.acceptTimeoutHours
+        : timeoutHours
   }
 }
 
@@ -441,8 +446,25 @@ async function detailTask(data, ctx) {
   }
 
   // 联系方式只对发布者和接单者可见
+  // 接单超时提示：超过设定时长仍未提交，提示即将自动退回大厅
+  let timeoutHint = ''
+  if (task.status === STATUS.ACCEPTED && task.takenAt) {
+    const platform = await getPlatformSettings()
+    const hours = platform.acceptTimeoutHours
+    const takenAtMs = new Date(task.takenAt).getTime()
+    if (!Number.isNaN(takenAtMs)) {
+      const overdueMs = Date.now() - takenAtMs - hours * 3600 * 1000
+      if (overdueMs > 0) {
+        timeoutHint =
+          task.timeoutRemindedAt
+            ? `接单已超过 ${hours} 小时，再不提交将自动退回大厅`
+            : '接单已超时，系统稍后会提醒接单者'
+      }
+    }
+  }
+
   const safeTask = permissions.canViewContact ? task : stripPrivate(task)
-  return { task: safeTask, permissions }
+  return { task: safeTask, permissions, timeoutHint }
 }
 
 /**

@@ -22,6 +22,7 @@ Page({
     // 联系方式默认打码，需主动点「查看」才显示完整
     contactMasked: '',
     contactRevealed: false,
+    timeoutHint: '',
     reportVisible: false,
     reportTarget: { type: '', id: '', title: '举报' }
   },
@@ -86,7 +87,8 @@ Page({
         permissions: detail.permissions || {},
         comments: commentRes.list,
         contactMasked: detail.task ? maskContact(detail.task.contact) : '',
-        contactRevealed: false
+        contactRevealed: false,
+        timeoutHint: detail.timeoutHint || ''
       })
       wx.setNavigationBarTitle({ title: detail.task ? detail.task.title : '任务详情' })
     } catch (err) {

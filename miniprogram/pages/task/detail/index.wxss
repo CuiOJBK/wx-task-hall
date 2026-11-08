@@ -146,6 +146,16 @@
 
 /* 底部输入条与表情面板样式已抽到 components/comment-bar，本页不再维护 */
 
+.timeout-bar {
+  background: #fff8e6;
+  border: 1rpx solid #ffe9b8;
+  border-radius: 16rpx;
+  padding: 18rpx 22rpx;
+  margin-bottom: 16rpx;
+  font-size: 24rpx;
+  color: #8a6d1f;
+}
+
 .contact-value {
   display: flex;
   align-items: center;

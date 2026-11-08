@@ -25,6 +25,7 @@
 |---|---|---|---|
 | 1 | **云存储权限** | 存储 → 权限设置 | 头像用 `open-type="chooseAvatar"` 上传后，别人页面加载不出来（默认只有创建者可读）。改成「**所有用户可读，仅创建者可写**」 |
 | 2 | **`initdb` 环境变量** | 云函数 → initdb → 配置 → 环境变量 | 加 `ADMIN_OPENIDS=你的openid`，否则客户端调不进来（控制台仍可调） |
+| 2c | **`taskcron` 定时触发器** | 云函数 → taskcron → 触发器，应看到 `taskTimeoutScan`（每小时整点） | CLI 部署会带上 config.json，但个别版本不自动建触发器，部署后务必到控制台确认；手动补建时类型选 timer、cron 填 `0 0 * * * * *` |
 | 2b | **消息推送（图片审核）** | 开发管理 → 消息推送 → 启用，数据格式 JSON，事件勾选「图片审核」，推送方式选云函数并指向 `mediacheck` | 不配也能发图，但违规图不会被自动删除；配了之后 `mediacheck` 才收得到 `wxa_media_check` 回调 |
 | 3 | **`users.nicknameKey` 唯一索引** | 数据库 → users → 索引管理 | 昵称唯一性只剩代码层查重，并发下会重名。**建索引前先跑 `login.migrateNicknameKey`** |
 | 4 | 其余索引 | 数据库 → 索引管理 | 见 README 步骤 6：`tasks` 三个复合索引、`comments.idx_target`、`posts.idx_created` |

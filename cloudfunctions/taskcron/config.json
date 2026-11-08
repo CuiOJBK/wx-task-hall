@@ -1,0 +1,9 @@
+{
+  "triggers": [
+    {
+      "name": "taskTimeoutScan",
+      "type": "timer",
+      "config": "0 0 * * * * *"
+    }
+  ]
+}

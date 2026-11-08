@@ -34,7 +34,7 @@
 | P1-4 | 独立发帖页 | **✅ 已完成**：`pages/post/create` 多行正文 + emoji 面板 + 最多 3 张图 + 字数统计；列表与详情展示配图 | `post.create` 同步支持 images 并接入图片安全检测 |
 | P1-5 | 订阅消息通知 | 无 | 三个场景：被接单、被提交、被确认。用 `cloud.openapi.subscribeMessage.send`，用户端先 `requestSubscribeMessage` 拿授权 | — |
 | P1-6 | 我接的单筛选 | 只有角色切换 | 加状态筛选 Tab，复用 `hall` 的 Tab 组件 | — |
-| P1-7 | 任务超时处理 | 无 | 定时触发器（`config.json` 里配 `triggers`），`accepted` 超过 N 小时未提交 → 提醒或自动取消 | — |
+| P1-7 | 任务超时处理 | **✅ 已完成**：新增 `taskcron` 定时云函数（每小时整点），两段式——超 N 小时打标记+站内通知，超 2N 小时自动退回大厅并通知双方；时长由后台设置 `acceptTimeoutHours` 控制 | 站内通知写入 `notifications` 集合，订阅消息推送待 P1-5 |
 | P1-8 | 评论删除入口 | **✅ 已接**：主楼显示「删除」文字、长按任意自己的评论弹 ActionSheet | 顺带修了删主楼时计数只减 1 的 bug，现按「1+回复数」扣减 | — |
 | P1-9 | 分享卡片 | 无 | `onShareAppMessage` + 任务详情页带 `id` 参数，`onShareTimeline` | — |
 | P1-10 | 空态与骨架屏 | 只有文字空态 | 列表加载骨架屏，减少白屏感 | — |

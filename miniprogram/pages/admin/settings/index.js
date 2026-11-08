@@ -9,7 +9,8 @@ Page({
       maxReward: 500,
       reportThreshold: 3,
       announcement: '',
-      allowPublish: true
+      allowPublish: true,
+      acceptTimeoutHours: 24
     },
     errors: {}
   },
@@ -61,6 +62,11 @@ Page({
       errors.announcement = '公告最多 200 字'
     }
 
+    const timeoutHours = Number(s.acceptTimeoutHours)
+    if (Number.isNaN(timeoutHours) || timeoutHours < 1 || timeoutHours > 168) {
+      errors.acceptTimeoutHours = '需为 1-168 小时'
+    }
+
     this.setData({ errors })
     return Object.keys(errors).length === 0
   },
@@ -78,7 +84,8 @@ Page({
           maxReward: Number(this.data.settings.maxReward),
           reportThreshold: Number(this.data.settings.reportThreshold),
           announcement: this.data.settings.announcement,
-          allowPublish: this.data.settings.allowPublish
+          allowPublish: this.data.settings.allowPublish,
+          acceptTimeoutHours: Number(this.data.settings.acceptTimeoutHours)
         }
       })
       this.setData({ settings: Object.assign(this.data.settings, d.settings) })

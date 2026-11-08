@@ -8,6 +8,11 @@
 </view>
 
 <view class="page detail-page" wx:elif="{{task}}">
+  <!-- 接单超时提示 -->
+  <view class="timeout-bar" wx:if="{{timeoutHint}}">
+    <text>⏰ {{timeoutHint}}</text>
+  </view>
+
   <!-- 任务主体 -->
   <view class="card">
     <view class="row">

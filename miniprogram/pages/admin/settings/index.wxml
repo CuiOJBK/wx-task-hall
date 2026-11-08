@@ -11,6 +11,12 @@
     </view>
 
     <view class="adm-field">
+      <text class="adm-label">接单超时小时数（超时提醒，2 倍时长自动退回大厅）</text>
+      <input class="adm-input" type="number" value="{{settings.acceptTimeoutHours}}" data-field="acceptTimeoutHours" bindinput="onInput" placeholder="1-168" />
+      <text class="adm-error" wx:if="{{errors.acceptTimeoutHours}}">{{errors.acceptTimeoutHours}}</text>
+    </view>
+
+    <view class="adm-field">
       <text class="adm-label">自动下架举报阈值（次）</text>
       <input class="adm-input" type="number" value="{{settings.reportThreshold}}" data-field="reportThreshold" bindinput="onInput" placeholder="1-100" />
       <text class="adm-error" wx:if="{{errors.reportThreshold}}">{{errors.reportThreshold}}</text>
