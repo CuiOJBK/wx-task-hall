@@ -1,0 +1,41 @@
+<view class="page">
+  <view class="card">
+    <textarea
+      class="content"
+      value="{{content}}"
+      placeholder="和大厅里的其他人聊点什么…（2-500 字）"
+      maxlength="500"
+      auto-height
+      show-confirm-bar="{{false}}"
+      bindinput="onInput"
+      bindfocus="onFocus"
+    />
+
+    <view class="bar">
+      <text class="count {{charCount > 500 ? 'over' : ''}}">{{charCount}}/500</text>
+      <view class="emoji-btn" bindtap="onToggleEmoji">{{showEmoji ? '⌨' : '😀'}}</view>
+    </view>
+  </view>
+
+  <emoji-panel
+    wx:if="{{showEmoji}}"
+    height="400"
+    bind:select="onPickEmoji"
+    bind:delete="onDeleteEmoji"
+  />
+
+  <view class="card">
+    <text class="label">图片<text class="hint">选填，最多 {{maxImages}} 张</text></text>
+    <view class="img-grid">
+      <view class="img-item" wx:for="{{images}}" wx:key="*this">
+        <image class="img-thumb" src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="onPreviewImage" />
+        <view class="img-del" data-index="{{index}}" catchtap="onRemoveImage">×</view>
+      </view>
+      <view class="img-add" wx:if="{{images.length < maxImages}}" bindtap="onChooseImage">＋</view>
+    </view>
+  </view>
+
+  <button class="btn btn-primary submit" bindtap="onSubmit" disabled="{{submitting}}">
+    {{submitting ? '发布中…' : '发布'}}
+  </button>
+</view>

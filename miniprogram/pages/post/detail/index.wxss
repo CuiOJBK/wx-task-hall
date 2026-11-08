@@ -49,6 +49,20 @@
   border: none;
 }
 
+.img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 16rpx;
+}
+
+.img-thumb {
+  width: 200rpx;
+  height: 200rpx;
+  margin: 0 12rpx 12rpx 0;
+  border-radius: 12rpx;
+  background: #f5f6f8;
+}
+
 .report-link {
   margin-left: 24rpx;
   font-size: 26rpx;

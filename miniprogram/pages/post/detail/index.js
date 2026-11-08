@@ -78,6 +78,14 @@ Page({
     }
   },
 
+  /** 预览话题配图 */
+  onPreviewPostImages(e) {
+    const index = Number(e.currentTarget.dataset.index)
+    const urls = (this.data.post && this.data.post.images) || []
+    if (!urls.length) return
+    wx.previewImage({ current: urls[index] || urls[0], urls })
+  },
+
   /** 回复点赞后同步本地列表 */
   onCommentLiked(e) {
     const { id, liked, likeCount } = e.detail || {}

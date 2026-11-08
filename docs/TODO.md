@@ -31,7 +31,7 @@
 | P1-1 | 图片上传 | **✅ 已完成**：任务配图 + 完成凭证各最多 3 张，`chooseMedia` 压缩后传云存储；`mediaCheckAsync` 异步检测 + `mediacheck` 回调删违规图 | 待办：小程序后台配置消息推送（事件「图片审核」）后自动处置才生效 |
 | P1-2 | 地理位置检索 | **✅ 已完成**：`listTasks` 优先走 `aggregate().geoNear()`（全局按距离排序 + 支持 skip/limit），索引缺失时自动降级内存排序并打日志；返回 `geoMode` 标记 | 待办：给 `tasks.geo` 建 2dsphere 索引即可启用（见 `docs/release-checklist.md`） |
 | P1-3 | 评论分页 / 更多回复 | 主楼分页，每条主楼下的回复一次最多取 100 条 | 加「查看更多回复」，按 `parentId` 单独分页 | — |
-| P1-4 | 独立发帖页 | 用 `wx.showModal({editable:true})` 凑的，不能发图，**也不支持 emoji 面板** | 新建 `pages/post/create`，复用 `components/comment-bar` 或做多行版本，支持多图、字数统计 | — |
+| P1-4 | 独立发帖页 | **✅ 已完成**：`pages/post/create` 多行正文 + emoji 面板 + 最多 3 张图 + 字数统计；列表与详情展示配图 | `post.create` 同步支持 images 并接入图片安全检测 |
 | P1-5 | 订阅消息通知 | 无 | 三个场景：被接单、被提交、被确认。用 `cloud.openapi.subscribeMessage.send`，用户端先 `requestSubscribeMessage` 拿授权 | — |
 | P1-6 | 我接的单筛选 | 只有角色切换 | 加状态筛选 Tab，复用 `hall` 的 Tab 组件 | — |
 | P1-7 | 任务超时处理 | 无 | 定时触发器（`config.json` 里配 `triggers`），`accepted` 超过 N 小时未提交 → 提醒或自动取消 | — |

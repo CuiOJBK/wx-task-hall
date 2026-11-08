@@ -67,28 +67,26 @@ Page({
 
   /** 骨架阶段用 editable modal 收集内容，后续替换为独立发帖页（见 TODO P1-4） */
   onCreate() {
-    wx.showModal({
-      title: '发布话题',
-      editable: true,
-      placeholderText: '和大厅里的其他人聊点什么…',
-      success: async (res) => {
-        if (!res.confirm) return
-        const content = (res.content || '').trim()
-        if (content.length < 2) {
-          wx.showToast({ title: '至少 2 个字', icon: 'none' })
-          return
-        }
-        wx.showLoading({ title: '发布中', mask: true })
-        try {
-          await postService.createPost({ content })
-          wx.hideLoading()
-          this.refresh()
-        } catch (err) {
-          wx.hideLoading()
-          showError(err, '发布失败')
-        }
-      }
-    })
+    wx.navigateTo({ url: '/pages/post/create/index' })
+  },
+
+  /** 从发帖页返回时刷新列表 */
+  onShow() {
+    if (this._needRefresh) {
+      this._needRefresh = false
+      this.refresh()
+    }
+  },
+
+  onHide() {
+    this._needRefresh = true
+  },
+
+  /** 预览话题配图 */
+  onPreviewPostImages(e) {
+    const { urls, index } = e.currentTarget.dataset
+    if (!urls || !urls.length) return
+    wx.previewImage({ current: urls[Number(index)] || urls[0], urls })
   },
 
   /** 点赞（catchtap 阻止冒泡，避免触发卡片跳转） */

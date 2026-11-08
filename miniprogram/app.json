@@ -7,6 +7,7 @@
     "pages/task/publish/index",
     "pages/task/detail/index",
     "pages/post/detail/index",
+    "pages/post/create/index",
     "pages/agreement/index",
     "pages/admin/dashboard/index",
     "pages/admin/users/index",

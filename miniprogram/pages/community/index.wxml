@@ -24,6 +24,21 @@
         <text class="muted">{{item.timeText}}</text>
       </view>
       <text class="post-content">{{item.contentText}}</text>
+
+      <view class="post-imgs" wx:if="{{item.images.length}}">
+        <image
+          class="post-img"
+          wx:for="{{item.images}}"
+          wx:for-item="img"
+          wx:for-index="imgIndex"
+          wx:key="*this"
+          src="{{img}}"
+          mode="aspectFill"
+          data-urls="{{item.images}}"
+          data-index="{{imgIndex}}"
+          catchtap="onPreviewPostImages"
+        />
+      </view>
       <view class="post-foot">
         <text class="muted">💬 {{item.replyCount || 0}} 条回复</text>
         <view

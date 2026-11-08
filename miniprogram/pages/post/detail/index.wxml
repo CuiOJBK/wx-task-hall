@@ -15,6 +15,18 @@
     </view>
     <text class="post-content">{{post.content}}</text>
 
+    <view class="img-grid" wx:if="{{post.images.length}}">
+      <image
+        class="img-thumb"
+        wx:for="{{post.images}}"
+        wx:key="*this"
+        src="{{item}}"
+        mode="aspectFill"
+        data-index="{{index}}"
+        bindtap="onPreviewPostImages"
+      />
+    </view>
+
     <view class="post-actions">
       <view class="like {{post.liked ? 'like-on' : ''}}" bindtap="onTapLike">
         <text class="like-icon">{{post.liked ? '❤️' : '🤍'}}</text>

@@ -11,6 +11,10 @@ const _ = db.command
 const C_POST = 'posts'
 const C_USER = 'users'
 const C_LIKE = 'likes'
+const C_IMAGE_CHECK = 'image_checks'
+
+/** 每帖最多 3 张图，与前端 picker 上限一致 */
+const MAX_IMAGES = 3
 
 const ok = (data) => ({ code: 0, data, msg: 'ok' })
 const fail = (code, msg) => ({ code, msg })
@@ -60,6 +64,64 @@ function assert(cond, code, msg) {
 /** 人眼字数：emoji 按 1 个字计 */
 function charLength(text) {
   return Array.from(String(text || '')).length
+}
+
+/** 规整图片数组：只接受 cloud:// fileID，去重并截断到 3 张 */
+function normalizeImages(list) {
+  if (!Array.isArray(list)) return []
+  const seen = {}
+  const out = []
+  for (const v of list) {
+    if (typeof v !== 'string' || v.indexOf('cloud://') !== 0) continue
+    if (seen[v]) continue
+    seen[v] = true
+    out.push(v)
+    if (out.length >= MAX_IMAGES) break
+  }
+  return out
+}
+
+/**
+ * 图片内容安全检测（mediaCheckAsync 异步接口）
+ * fileID → 临时 URL → 检测 → traceId，traceId 与 fileID 映射写入 image_checks
+ * 接口不可用时放行并记日志，不阻断发布
+ */
+async function checkImages(images, openid, scene, target) {
+  if (!images.length) return []
+  const traceIds = []
+  try {
+    const res = await cloud.getTempFileURL({ fileList: images })
+    const fileList = (res && res.fileList) || []
+    for (const f of fileList) {
+      if (!f || !f.tempFileURL) continue
+      try {
+        const check = await cloud.openapi.security.mediaCheckAsync({
+          mediaUrl: f.tempFileURL,
+          mediaType: 2,
+          version: 2,
+          openid,
+          scene: scene || 3
+        })
+        const traceId = check && check.traceId
+        if (!traceId) continue
+        traceIds.push(traceId)
+        await addWithColl(C_IMAGE_CHECK, {
+          traceId,
+          fileID: f.fileID,
+          openid,
+          status: 'pending',
+          targetType: (target && target.type) || '',
+          targetId: (target && target.id) || '',
+          createdAt: db.serverDate()
+        })
+      } catch (e) {
+        console.warn('[post] mediaCheckAsync 失败，本张放行：', (e && e.errMsg) || (e && e.message) || e)
+      }
+    }
+  } catch (e) {
+    console.warn('[post] 获取图片临时链接失败，本次放行：', (e && e.message) || e)
+  }
+  return traceIds
 }
 
 /** 登录校验（V1–V3）：话题读与写都要求已登录且状态正常 */
@@ -127,10 +189,12 @@ async function createPost(data, ctx) {
   assert(charLength(content) >= 2, 'INVALID_PARAM', '内容至少 2 个字')
   assert(charLength(content) <= 500, 'INVALID_PARAM', '内容最多 500 字（表情记 1 个字）')
 
+  const images = normalizeImages(data.images)
+
   const nickname = await getNickname(ctx.openid)
   const doc = {
     content,
-    images: Array.isArray(data.images) ? data.images.slice(0, 9) : [],
+    images,
     openid: ctx.openid,
     nickname,
     replyCount: 0,
@@ -142,7 +206,19 @@ async function createPost(data, ctx) {
   await assertContentSafe(content, ctx.openid, 3)
 
   const r = await addWithColl(C_POST, doc)
-  return { id: r._id }
+
+  if (images.length) {
+    const traceIds = await checkImages(images, ctx.openid, 3, { type: 'post', id: r._id })
+    if (traceIds.length) {
+      await db
+        .collection(C_POST)
+        .doc(r._id)
+        .update({ data: { imageCheckTraceIds: traceIds } })
+        .catch((e) => console.warn('[post] 回写 traceId 失败', e.message))
+    }
+  }
+
+  return { id: r._id, images }
 }
 
 async function listPosts(data, ctx) {
