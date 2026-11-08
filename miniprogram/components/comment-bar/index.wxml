@@ -10,21 +10,20 @@
 
   <!-- 输入行 -->
   <view class="bar">
-    <input
+    <textarea
       class="input"
       value="{{innerValue}}"
       focus="{{focus}}"
       maxlength="{{maxlength}}"
       placeholder="{{replyTo ? '回复 ' + replyTo.nickname : placeholder}}"
       placeholder-class="input-placeholder"
-      confirm-type="send"
-      confirm-hold
+      auto-height
+      show-confirm-bar="{{false}}"
       adjust-position="{{false}}"
       bindinput="onInput"
       bindtap="onInputTap"
       bindfocus="onFocus"
       bindblur="onBlur"
-      bindconfirm="onSend"
       bindkeyboardheightchange="onKeyboardHeightChange"
     />
 

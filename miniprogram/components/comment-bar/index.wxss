@@ -24,7 +24,7 @@
 
 .bar {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
 }
 
@@ -40,12 +40,15 @@
 
 .input {
   flex: 1;
-  height: 72rpx;
+  min-height: 72rpx;
+  max-height: 260rpx;
   background: #f5f6f8;
-  border-radius: 999rpx;
-  padding: 0 28rpx;
+  border-radius: 24rpx;
+  padding: 16rpx 24rpx;
   font-size: 28rpx;
+  line-height: 1.5;
   color: #1a1d23;
+  box-sizing: border-box;
 }
 
 .input-placeholder {
