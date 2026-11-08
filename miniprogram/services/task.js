@@ -30,6 +30,8 @@ async function listTasks(p = {}) {
       return view
     }),
     hasMore: !!d.hasMore,
+    // 'near' = 走 geoNear（全局按距离精确排序）；'memory' = 降级（仅当前页有效）；'none' = 未带定位
+    geoMode: d.geoMode || 'none',
     // 服务端下发的匿名标记：true 表示当前是受限浏览，前端据此切换渲染模式
     anonymous,
     total: d.total || 0

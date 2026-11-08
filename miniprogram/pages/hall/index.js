@@ -23,7 +23,8 @@ Page({
     anonymous: true,
     loginError: '',
     announcement: '',
-    platform: null
+    platform: null,
+    geoMode: 'none'
   },
 
   onLoad() {
@@ -127,11 +128,20 @@ Page({
         page: this.data.page,
         center: this.data.center
       })
+      // geoNear 降级时提示开发者在数据库为 tasks.geo 建 2dsphere 索引
+      if (res.geoMode === 'memory' && !this._geoWarned) {
+        this._geoWarned = true
+        console.warn(
+          '[hall] 距离排序已降级为内存排序（仅当前页有效）。\n' +
+            '请到云开发控制台为 tasks.geo 建 2dsphere 索引后自动启用 geoNear。'
+        )
+      }
       this.setData({
         list: reset ? res.list : this.data.list.concat(res.list),
         page: this.data.page + 1,
         finished: res.anonymous ? true : !res.hasMore,
-        anonymous: res.anonymous
+        anonymous: res.anonymous,
+        geoMode: res.geoMode
       })
     } catch (err) {
       showError(err, '加载失败')

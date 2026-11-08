@@ -29,7 +29,7 @@
 | # | 模块 | 现状 | 做法 | 参考 |
 |---|---|---|---|---|
 | P1-1 | 图片上传 | 无 | 云存储 `wx.cloud.uploadFile`，任务配图 / 接单完成凭证；`posts.images` 字段已预留 | — |
-| P1-2 | 地理位置检索 | 内存 haversine 排序，只对当前页生效 | 改用 `db.collection('tasks').where({ geo: _.geoNear({ geometry: db.Geo.Point(lng,lat), maxDistance }) })`，并给 `geo` 建 2dsphere 索引。**这是当前最该补的技术短板**：翻页后排序会错乱 | campus_express_delivery_cos 的 `RealTimeLocationController` |
+| P1-2 | 地理位置检索 | **✅ 已完成**：`listTasks` 优先走 `aggregate().geoNear()`（全局按距离排序 + 支持 skip/limit），索引缺失时自动降级内存排序并打日志；返回 `geoMode` 标记 | 待办：给 `tasks.geo` 建 2dsphere 索引即可启用（见 `docs/release-checklist.md`） |
 | P1-3 | 评论分页 / 更多回复 | 主楼分页，每条主楼下的回复一次最多取 100 条 | 加「查看更多回复」，按 `parentId` 单独分页 | — |
 | P1-4 | 独立发帖页 | 用 `wx.showModal({editable:true})` 凑的，不能发图，**也不支持 emoji 面板** | 新建 `pages/post/create`，复用 `components/comment-bar` 或做多行版本，支持多图、字数统计 | — |
 | P1-5 | 订阅消息通知 | 无 | 三个场景：被接单、被提交、被确认。用 `cloud.openapi.subscribeMessage.send`，用户端先 `requestSubscribeMessage` 拿授权 | — |

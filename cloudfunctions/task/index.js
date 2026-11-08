@@ -267,6 +267,32 @@ async function createTask(data, ctx) {
  * A6 返回字段按白名单裁剪
  * A7 hasMore 恒为 false
  */
+/**
+ * 按距离分页（geoNear）
+ *
+ * 依赖 tasks.geo 的 2dsphere 索引。索引缺失时 aggregate 会抛错，
+ * 由 listTasks 捕获后降级为内存排序 —— 不能因为少建一个索引就让大厅挂掉。
+ *
+ * 注意：$geoNear 只返回「有 geo 字段」的文档，未选地点的任务在距离模式下不出现，
+ * 这是符合预期的产品行为（按距离看，本来就不该包含无位置的任务）。
+ */
+async function listByGeoNear({ where, center, limit, page }) {
+  const res = await db
+    .collection(C_TASK)
+    .aggregate()
+    .geoNear({
+      near: db.Geo.Point(Number(center.longitude), Number(center.latitude)),
+      distanceField: 'distance',
+      query: where,
+      key: 'geo'
+    })
+    .skip(page * limit)
+    .limit(limit + 1)
+    .end()
+
+  return (res && res.list) || []
+}
+
 async function listTasks(data, ctx) {
   const user = ctx.openid ? await getUserByOpenid(ctx.openid) : null
   const authorized = !!(user && user.consent === true && (!user.status || user.status === 'active'))
@@ -283,25 +309,43 @@ async function listTasks(data, ctx) {
     where.title = db.RegExp({ regexp: String(data.keyword).slice(0, 20), options: 'i' })
   }
 
-  // 多取一条用于判断是否还有下一页：rows.length === limit 在刚好整除时会误判
-  let rows = await safeGet(
-    db.collection(C_TASK).where(where).orderBy('createdAt', 'desc').skip(page * limit).limit(limit + 1),
-    []
-  )
-
   // 匿名不参与距离排序：距离能反推坐标，属于 L4 排除的信息
   const center = authorized ? data.center : null
-  if (center && center.latitude != null) {
-    rows = rows
-      .map((t) => {
-        const d = t.location ? haversine(center, t.location) : null
-        return d === null ? { ...t } : { ...t, distance: d }
-      })
-      .sort((a, b) => {
-        if (a.distance == null) return 1
-        if (b.distance == null) return -1
-        return a.distance - b.distance
-      })
+  const canSortByGeo = !!(center && center.latitude != null && center.longitude != null)
+
+  let rows = []
+  let geoMode = 'none'
+
+  if (canSortByGeo) {
+    try {
+      rows = await listByGeoNear({ where, center, limit, page })
+      geoMode = 'near'
+    } catch (e) {
+      // 最常见原因：tasks.geo 没有 2dsphere 索引
+      console.warn('[task] geoNear 不可用，降级为内存排序：', (e && e.message) || e)
+    }
+  }
+
+  if (geoMode !== 'near') {
+    // 多取一条用于判断是否还有下一页
+    rows = await safeGet(
+      db.collection(C_TASK).where(where).orderBy('createdAt', 'desc').skip(page * limit).limit(limit + 1),
+      []
+    )
+
+    // 降级路径：仍在内存里按距离排，但只对当前页有效，跨页顺序不保证
+    if (canSortByGeo) {
+      rows = rows
+        .map((t) => {
+          const d = t.location ? haversine(center, t.location) : null
+          return d === null ? { ...t } : { ...t, distance: d }
+        })
+        .sort((a, b) => {
+          if (a.distance == null) return 1
+          if (b.distance == null) return -1
+          return a.distance - b.distance
+        })
+    }
   }
 
   const hasMore = rows.length > limit
@@ -312,11 +356,12 @@ async function listTasks(data, ctx) {
     return {
       list: rows.map(pickAnonTask),
       hasMore: false,
-      anonymous: true
+      anonymous: true,
+      geoMode: 'none'
     }
   }
 
-  return { list: rows.map(stripPrivate), hasMore, anonymous: false }
+  return { list: rows.map(stripPrivate), hasMore, anonymous: false, geoMode }
 }
 
 async function detailTask(data, ctx) {
