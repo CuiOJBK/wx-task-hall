@@ -45,6 +45,13 @@
   margin-top: 8rpx;
 }
 
+.more-children {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #3c7fff;
+  padding: 6rpx 0;
+}
+
 .like-btn {
   display: inline-flex;
   align-items: center;

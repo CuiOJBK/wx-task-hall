@@ -101,6 +101,20 @@ Page({
     this.setData({ contactRevealed: !this.data.contactRevealed })
   },
 
+  /** 追加主楼下的更多回复 */
+  onMoreChildren(e) {
+    const { parentId, list, hasMore } = e.detail || {}
+    if (!parentId) return
+    const comments = (this.data.comments || []).map((c) => {
+      if (c._id !== parentId) return c
+      return Object.assign({}, c, {
+        children: (c.children || []).concat(list || []),
+        childrenHasMore: !!hasMore
+      })
+    })
+    this.setData({ comments })
+  },
+
   /** 评论点赞后同步本地列表，避免整页重载 */
   onCommentLiked(e) {
     const { id, liked, likeCount } = e.detail || {}

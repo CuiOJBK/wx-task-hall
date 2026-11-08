@@ -59,6 +59,14 @@
           </view>
         </view>
       </view>
+
+      <view
+        class="more-children"
+        wx:if="{{item.childrenHasMore}}"
+        data-id="{{item._id}}"
+        data-loaded="{{item.children.length}}"
+        catchtap="onLoadMoreChildren"
+      >查看更多回复（共 {{item.replyCount}} 条）</view>
     </view>
   </view>
 </view>

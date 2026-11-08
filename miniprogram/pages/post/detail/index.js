@@ -78,6 +78,20 @@ Page({
     }
   },
 
+  /** 追加主楼下的更多回复 */
+  onMoreChildren(e) {
+    const { parentId, list, hasMore } = e.detail || {}
+    if (!parentId) return
+    const replies = (this.data.replies || []).map((c) => {
+      if (c._id !== parentId) return c
+      return Object.assign({}, c, {
+        children: (c.children || []).concat(list || []),
+        childrenHasMore: !!hasMore
+      })
+    })
+    this.setData({ replies })
+  },
+
   /** 预览话题配图 */
   onPreviewPostImages(e) {
     const index = Number(e.currentTarget.dataset.index)

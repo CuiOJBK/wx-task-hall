@@ -28,10 +28,28 @@ async function removeComment(id) {
   return res.data
 }
 
+/** 某条主楼下的回复分页（「查看更多回复」） */
+async function getChildren(parentId, page) {
+  const res = await call('comment', 'children', {
+    parentId,
+    page: page || 0,
+    pageSize: 20
+  })
+  const d = res.data || {}
+  return { list: (d.list || []).map(decorateComment), hasMore: !!d.hasMore }
+}
+
 /** 点赞 / 取消点赞（切换），返回 { liked, likeCount } */
 async function toggleLike(id) {
   const res = await call('comment', 'like', { id })
   return res.data
 }
 
-module.exports = { listComments, addComment, removeComment, toggleLike, pageSize: config.pageSize }
+module.exports = {
+  listComments,
+  addComment,
+  removeComment,
+  toggleLike,
+  getChildren,
+  pageSize: config.pageSize
+}

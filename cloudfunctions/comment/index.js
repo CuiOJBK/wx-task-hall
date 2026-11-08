@@ -241,6 +241,24 @@ async function listComments(data, ctx) {
     map[c.parentId].push(c)
   })
 
+  // 统计每条主楼下的回复总数（用于「查看更多回复」）
+  let countMap = {}
+  try {
+    const $ = db.command.aggregate
+    const agg = await db
+      .collection(C_COMMENT)
+      .aggregate()
+      .match({ targetType, targetId, parentId: _.in(ids) })
+      .group({ _id: '$parentId', total: $.sum(1) })
+      .end()
+    ;((agg && agg.list) || []).forEach((row) => {
+      countMap[row._id] = row.total
+    })
+  } catch (e) {
+    console.warn('[comment] 子回复计数失败，降级用已取条数', e.message)
+    countMap = {}
+  }
+
   // 一次性查出当前用户对这批评论的点赞状态，避免 N+1
   const allIds = [].concat(ids, children.map((c) => c._id))
   const likes = allIds.length
@@ -260,10 +278,16 @@ async function listComments(data, ctx) {
   const markLiked = (c) => ({ ...c, liked: !!likedSet[c._id], likeCount: c.likeCount || 0 })
 
   return {
-    list: pageMains.map((m) => ({
-      ...markLiked(m),
-      children: (map[m._id] || []).map(markLiked)
-    })),
+    list: pageMains.map((m) => {
+      const children = (map[m._id] || []).map(markLiked)
+      const replyCount = countMap[m._id] || children.length
+      return {
+        ...markLiked(m),
+        children,
+        replyCount,
+        childrenHasMore: replyCount > children.length
+      }
+    }),
     hasMore
   }
 }
@@ -340,11 +364,61 @@ async function likeComment(data, ctx) {
   return { liked, likeCount: Math.max(0, (latest && latest.likeCount) || 0) }
 }
 
+/**
+ * 某条主楼下的回复分页（「查看更多回复」）
+ * 单独按 parentId 查询，不走主楼列表，避免一次拉 100 条被截断
+ */
+async function listChildren(data, ctx) {
+  await requireActiveUser(ctx)
+  const parentId = String(data.parentId || '')
+  assert(parentId, 'INVALID_PARAM', '缺少主楼 ID')
+
+  const limit = Math.min(Number(data.pageSize) || 20, 50)
+  const page = Math.max(Number(data.page) || 0, 0)
+
+  const rows = await safeGet(
+    db
+      .collection(C_COMMENT)
+      .where({ parentId })
+      .orderBy('createdAt', 'asc')
+      .skip(page * limit)
+      .limit(limit + 1),
+    []
+  )
+  const list = rows.slice(0, limit)
+
+  // 回填当前用户的点赞状态
+  if (list.length) {
+    const likes = await safeGet(
+      db
+        .collection(C_LIKE)
+        .where({
+          targetType: 'comment',
+          openid: ctx.openid,
+          targetId: _.in(list.map((c) => c._id))
+        })
+        .limit(1000),
+      []
+    )
+    const likedSet = {}
+    likes.forEach((l) => {
+      likedSet[l.targetId] = true
+    })
+    list.forEach((c) => {
+      c.liked = !!likedSet[c._id]
+      c.likeCount = c.likeCount || 0
+    })
+  }
+
+  return { list, hasMore: rows.length > limit }
+}
+
 const ACTIONS = {
   add: addComment,
   list: listComments,
   remove: removeComment,
-  like: likeComment
+  like: likeComment,
+  children: listChildren
 }
 
 exports.main = async (event = {}) => {

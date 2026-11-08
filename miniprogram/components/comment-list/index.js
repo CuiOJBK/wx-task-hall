@@ -22,6 +22,19 @@ Component({
       this.triggerEvent('reply', { comment: item })
     },
 
+    /** 查看更多回复：按 parentId 单独分页拉取 */
+    async onLoadMoreChildren(e) {
+      const { id, loaded } = e.currentTarget.dataset
+      if (!id) return
+      try {
+        const page = Math.floor(Number(loaded || 0) / 20)
+        const d = await commentService.getChildren(id, page)
+        this.triggerEvent('children', { parentId: id, list: d.list, hasMore: d.hasMore })
+      } catch (err) {
+        wx.showToast({ title: err.message || '加载失败', icon: 'none' })
+      }
+    },
+
     /** 点赞 / 取消：成功后抛事件，由页面更新列表数据 */
     async onToggleLike(e) {
       const { id } = e.currentTarget.dataset

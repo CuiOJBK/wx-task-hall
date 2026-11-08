@@ -130,6 +130,7 @@
       bind:remove="onRemoveComment"
       bind:report="onReportComment"
       bind:liked="onCommentLiked"
+      bind:children="onMoreChildren"
     />
   </view>
 
