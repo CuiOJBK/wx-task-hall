@@ -45,6 +45,26 @@ Page({
     this.loadAll()
   },
 
+  /** 分享任务给好友 */
+  onShareAppMessage() {
+    const task = this.data.task
+    const title = task && task.title ? `【任务】${task.title}` : '任务大厅：找人帮忙，顺手赚点'
+    return {
+      title: title.slice(0, 30),
+      path: `/pages/task/detail/index?id=${this.data.id}`
+    }
+  },
+
+  /** 分享到朋友圈（基础库 2.11.3+） */
+  onShareTimeline() {
+    const task = this.data.task
+    const title = task && task.title ? `【任务】${task.title}` : '任务大厅：找人帮忙，顺手赚点'
+    return {
+      title: title.slice(0, 30),
+      query: `id=${this.data.id}`
+    }
+  },
+
   onPullDownRefresh() {
     this.loadAll().then(() => wx.stopPullDownRefresh())
   },

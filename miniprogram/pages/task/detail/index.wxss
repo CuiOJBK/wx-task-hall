@@ -1,6 +1,22 @@
-.report-row {
-  text-align: right;
+.foot-ops {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 4rpx 8rpx 24rpx;
+}
+
+.share-btn {
+  margin: 0;
+  padding: 8rpx 26rpx;
+  font-size: 26rpx;
+  color: #3c7fff;
+  background: #eef4ff;
+  border-radius: 999rpx;
+  line-height: 1.6;
+}
+
+.share-btn::after {
+  border: none;
 }
 
 .report-text {

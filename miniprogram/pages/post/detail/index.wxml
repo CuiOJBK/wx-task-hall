@@ -21,6 +21,7 @@
         <text class="like-num">{{post.likeCount || 0}}</text>
       </view>
       <text class="report-link" wx:if="{{post.openid !== myOpenid}}" bindtap="onTapReport">⚠️ 举报</text>
+      <button class="share-link" open-type="share">分享</button>
     </view>
   </view>
 

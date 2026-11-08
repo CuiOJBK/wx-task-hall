@@ -40,6 +40,18 @@ Page({
     this.tryLocate()
   },
 
+  /** 分享小程序首页 */
+  onShareAppMessage() {
+    return {
+      title: '任务大厅：找人帮忙，顺手赚点',
+      path: '/pages/hall/index'
+    }
+  },
+
+  onShareTimeline() {
+    return { title: '任务大厅：找人帮忙，顺手赚点' }
+  },
+
   onPullDownRefresh() {
     this.refresh().then(() => wx.stopPullDownRefresh())
   },

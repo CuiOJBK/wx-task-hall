@@ -35,6 +35,20 @@
   word-break: break-all;
 }
 
+.share-link {
+  margin: 0 0 0 16rpx;
+  padding: 4rpx 20rpx;
+  font-size: 24rpx;
+  color: #3c7fff;
+  background: #eef4ff;
+  border-radius: 999rpx;
+  line-height: 1.7;
+}
+
+.share-link::after {
+  border: none;
+}
+
 .report-link {
   margin-left: 24rpx;
   font-size: 26rpx;

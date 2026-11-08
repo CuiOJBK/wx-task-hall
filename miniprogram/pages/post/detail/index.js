@@ -39,6 +39,26 @@ Page({
     this.loadAll()
   },
 
+  /** 分享话题给好友 */
+  onShareAppMessage() {
+    const post = this.data.post
+    const text = post && post.content ? post.content : '来大厅聊聊'
+    return {
+      title: text.slice(0, 30),
+      path: `/pages/post/detail/index?id=${this.data.id}`
+    }
+  },
+
+  /** 分享到朋友圈 */
+  onShareTimeline() {
+    const post = this.data.post
+    const text = post && post.content ? post.content : '来大厅聊聊'
+    return {
+      title: text.slice(0, 30),
+      query: `id=${this.data.id}`
+    }
+  },
+
   onPullDownRefresh() {
     this.loadAll().then(() => wx.stopPullDownRefresh())
   },

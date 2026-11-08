@@ -75,9 +75,10 @@
     </view>
   </view>
 
-  <!-- 举报入口：只看别人的任务 -->
-  <view class="report-row" wx:if="{{!permissions.isOwner}}" bindtap="onTapReport">
-    <text class="report-text">⚠️ 举报该任务</text>
+  <!-- 底部次要操作：分享 / 举报 -->
+  <view class="foot-ops">
+    <button class="share-btn" open-type="share">分享给好友</button>
+    <text class="report-text" wx:if="{{!permissions.isOwner}}" bindtap="onTapReport">⚠️ 举报该任务</text>
   </view>
 
   <!-- 评论区 -->
