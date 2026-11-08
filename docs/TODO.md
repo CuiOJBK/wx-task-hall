@@ -3,7 +3,9 @@
 骨架已打通：路由、云函数、数据模型、状态机、两级评论、定位落库、权限下发、emoji 表情输入。
 下面按优先级列出还没做的部分。P0 是**上线前必须做**，P1 是完整产品功能，P2 是商业化/规模化。
 
-> **已完成**：任务状态机与并发抢单、两级评论、定位选点与距离排序、权限下发、**emoji 表情输入（v0.2.0，见 `docs/emoji.md`）**
+> **已完成**：任务状态机与并发抢单、两级评论、定位选点、**身份权限体系（G1–G8，见 `docs/auth-rules.md`）**、emoji 表情输入（`docs/emoji.md`）、地址分级脱敏、昵称约束（`docs/nickname.md`）、话题点赞、`initdb` 白名单
+>
+> 单测现状：`scripts/` 下 4 组共 76 条（emoji 19 / 键盘 10 / 地址 21 / 昵称 26），均可在 node 下直接跑
 
 ---
 
@@ -13,9 +15,9 @@
 |---|---|---|---|---|
 | P0-1 | 内容安全检测 | 无 | 云函数里写评论/发任务前调 `cloud.openapi.security.msgSecCheck`（文本）、`mediaCheckAsync`（图片）。命中直接返回 `CONTENT_RISK` | aircon-bang 的「全量文本过 msgSecCheck」做法 |
 | P0-2 | 隐私协议 + 用户协议 | 无 | 小程序后台配置隐私协议，首启弹窗同意；`app.json` 的 `requiredPrivateInfos` 已声明位置，但后台接口权限要同步申请 | — |
-| P0-3 | 昵称头像 | 用户集合有字段，但从未写入 | 用 `button open-type="chooseAvatar"` + `input type="nickname"` 获取，再调 `login.updateProfile`（云函数已实现） | — |
+| P0-3 | 昵称头像 | 昵称已可设置/修改（弹窗输入，**未用 `input type="nickname"`**）；头像仍为空，依赖 P1-1 上传 | 用 `button open-type="chooseAvatar"` + `input type="nickname"` 重做；头像接云存储后调 `login.updateProfile` | — |
 | P0-4 | 联系方式保护 | 列表页已剥离 `contact`，详情页仅双方可见 | 进一步：详情页展示时做中间四位打码，或接虚拟号。当前实现已够过审 | — |
-| P0-5 | 列表 `hasMore` 不准 | 用 `rows.length === limit` 判断 | 换成 `collection.count()` 单独查总数，或 `skip+limit` 取 `limit+1` 条判断 | — |
+| P0-5 | 列表 `hasMore` 不准 | **✅ 已修**：4 处改为「多取一条」（`limit+1`），`hasMore = rows.length > limit` 后裁剪 | task.list / task.mine / comment.list / post.list 全覆盖 |
 | P0-6 | 举报入口 | 无 | 任务详情/话题详情加「举报」，写 `reports` 集合，管理端处理。审核时评委常查这一项 | — |
 | **P0-7** | **权限体系落地** | **✅ G1–G8 全部完成（V4 按昵称判定）** | **剩余：① 头像纳入资料完整判定（依赖 P1-1 图片上传）；② 封禁管理后台；③ 评论点赞** | — |
 | **P0-8** | **`initdb` 对客户端开放** | **✅ 已加 `ADMIN_OPENIDS` 白名单** | **部署时记得在云函数环境变量配 `ADMIN_OPENIDS`；顺便清理示例数据** | — |
@@ -33,7 +35,7 @@
 | P1-5 | 订阅消息通知 | 无 | 三个场景：被接单、被提交、被确认。用 `cloud.openapi.subscribeMessage.send`，用户端先 `requestSubscribeMessage` 拿授权 | — |
 | P1-6 | 我接的单筛选 | 只有角色切换 | 加状态筛选 Tab，复用 `hall` 的 Tab 组件 | — |
 | P1-7 | 任务超时处理 | 无 | 定时触发器（`config.json` 里配 `triggers`），`accepted` 超过 N 小时未提交 → 提醒或自动取消 | — |
-| P1-8 | 评论删除入口 | 云函数 `comment.remove` 已实现，页面没接 | 长按自己的评论弹删除；主楼删除时云函数已连带清理回复 | — |
+| P1-8 | 评论删除入口 | **✅ 已接**：主楼显示「删除」文字、长按任意自己的评论弹 ActionSheet | 顺带修了删主楼时计数只减 1 的 bug，现按「1+回复数」扣减 | — |
 | P1-9 | 分享卡片 | 无 | `onShareAppMessage` + 任务详情页带 `id` 参数，`onShareTimeline` | — |
 | P1-10 | 空态与骨架屏 | 只有文字空态 | 列表加载骨架屏，减少白屏感 | — |
 
@@ -58,7 +60,7 @@
 |---|---|---|
 | D-1 | 集合名、状态枚举在前端 `utils/constants.js` 和 5 个云函数里各写一份 | 抽一个 `shared/` 目录，用构建脚本同步进各云函数（云函数无法直接 require 上级目录） |
 | D-2 | 云函数的 `addWithColl` / `safeGet` / `bizError` 是复制粘贴的 | 同上，或发布成私有 npm 包 |
-| D-3 | 零单元测试 | 把 `transition` 的状态机判断、`haversine`、评论层级校验抽成纯函数放 `lib/`，用 jest 覆盖 |
+| D-3 | 纯逻辑单测已有 76 条（emoji/键盘/地址/昵称），但**核心业务无覆盖**：`transition` 状态机、`haversine`、评论层级校验都没测 | 把这几个抽成纯函数模块，补测试；状态机是最该测的（错了会写脏数据） |
 | D-4 | 错误只 `console.error` | 接云开发日志告警或自建上报，至少把 `code !== 0` 的调用打点 |
 | D-5 | 页面无 loading 骨架，弱网体验差 | 抽 `loading` / `error` 通用组件 |
 | D-6 | ~~emoji 插入位置以「最后一次输入的光标」为准~~ | **已修（v0.2.1）**：改用 `wx.getSelectedTextRange()` 在输入框失焦前读真实选区，点文本中间再插表情也能精确落位 |

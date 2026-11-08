@@ -224,8 +224,9 @@ async function listTasks(data, ctx) {
     where.title = db.RegExp({ regexp: String(data.keyword).slice(0, 20), options: 'i' })
   }
 
+  // 多取一条用于判断是否还有下一页：rows.length === limit 在刚好整除时会误判
   let rows = await safeGet(
-    db.collection(C_TASK).where(where).orderBy('createdAt', 'desc').skip(page * limit).limit(limit),
+    db.collection(C_TASK).where(where).orderBy('createdAt', 'desc').skip(page * limit).limit(limit + 1),
     []
   )
 
@@ -244,6 +245,9 @@ async function listTasks(data, ctx) {
       })
   }
 
+  const hasMore = rows.length > limit
+  rows = rows.slice(0, limit)
+
   if (!authorized) {
     // A6 + A7
     return {
@@ -253,7 +257,7 @@ async function listTasks(data, ctx) {
     }
   }
 
-  return { list: rows.map(stripPrivate), hasMore: rows.length === limit, anonymous: false }
+  return { list: rows.map(stripPrivate), hasMore, anonymous: false }
 }
 
 async function detailTask(data, ctx) {
@@ -374,10 +378,10 @@ async function mineTasks(data, ctx) {
   const where = role === 'taker' ? { takerOpenid: ctx.openid } : { ownerOpenid: ctx.openid }
 
   const rows = await safeGet(
-    db.collection(C_TASK).where(where).orderBy('createdAt', 'desc').skip(page * limit).limit(limit),
+    db.collection(C_TASK).where(where).orderBy('createdAt', 'desc').skip(page * limit).limit(limit + 1),
     []
   )
-  return { list: rows, hasMore: rows.length === limit }
+  return { list: rows.slice(0, limit), hasMore: rows.length > limit }
 }
 
 const ACTIONS = {

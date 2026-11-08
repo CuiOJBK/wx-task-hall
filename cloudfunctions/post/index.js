@@ -117,13 +117,17 @@ async function listPosts(data, ctx) {
   const page = Math.max(Number(data.page) || 0, 0)
 
   const rows = await safeGet(
-    db.collection(C_POST).orderBy('createdAt', 'desc').skip(page * limit).limit(limit),
+    db.collection(C_POST).orderBy('createdAt', 'desc').skip(page * limit).limit(limit + 1),
     []
   )
   if (!rows.length) return { list: [], hasMore: false }
 
+  // 多取的那一条只用于判断有没有下一页
+  const hasMore = rows.length > limit
+  const pageRows = rows.slice(0, limit)
+
   // 一次性查出当前用户对这批话题的点赞状态，避免 N+1
-  const ids = rows.map((r) => r._id)
+  const ids = pageRows.map((r) => r._id)
   const likes = await safeGet(
     db.collection(C_LIKE).where({ targetType: 'post', openid: ctx.openid, targetId: _.in(ids) }).limit(100),
     []
@@ -134,8 +138,8 @@ async function listPosts(data, ctx) {
   })
 
   return {
-    list: rows.map((r) => ({ ...r, liked: !!likedSet[r._id] })),
-    hasMore: rows.length === limit
+    list: pageRows.map((r) => ({ ...r, liked: !!likedSet[r._id] })),
+    hasMore
   }
 }
 

@@ -178,14 +178,18 @@ async function listComments(data, ctx) {
       .where({ targetType, targetId, parentId: '' })
       .orderBy('createdAt', 'desc')
       .skip(page * limit)
-      .limit(limit),
+      .limit(limit + 1),
     []
   )
 
   if (!mains.length) return { list: [], hasMore: false }
 
+  // 多取的那一条只用于判断有没有下一页
+  const hasMore = mains.length > limit
+  const pageMains = mains.slice(0, limit)
+
   // 2) 一次性取出这些主楼下的全部回复（限 100 条，超出走「查看更多回复」）
-  const ids = mains.map((m) => m._id)
+  const ids = pageMains.map((m) => m._id)
   const children = await safeGet(
     db
       .collection(C_COMMENT)
@@ -202,8 +206,8 @@ async function listComments(data, ctx) {
   })
 
   return {
-    list: mains.map((m) => ({ ...m, children: map[m._id] || [] })),
-    hasMore: mains.length === limit
+    list: pageMains.map((m) => ({ ...m, children: map[m._id] || [] })),
+    hasMore
   }
 }
 
@@ -214,11 +218,21 @@ async function removeComment(data, ctx) {
   assert(comment, 'NOT_FOUND', '评论不存在')
   assert(comment.openid === ctx.openid, 'FORBIDDEN', '只能删除自己的评论')
 
+  // 每条评论入库时都 +1 计数，删主楼会连带删掉回复，
+  // 所以必须按「1 + 回复数」整体扣减，否则计数会永久偏高
+  let cascadeCount = 0
+  if (!comment.parentId) {
+    const children = await safeGet(
+      db.collection(C_COMMENT).where({ parentId: data.id }).limit(1000),
+      []
+    )
+    cascadeCount = children.length
+  }
+
   const res = await db.collection(C_COMMENT).doc(data.id).remove()
-  await incCounter(comment.targetType, comment.targetId, -1)
 
   // 主楼删除时，其下回复一并清理（两级结构，深度固定）
-  if (!comment.parentId) {
+  if (!comment.parentId && cascadeCount > 0) {
     await db
       .collection(C_COMMENT)
       .where({ parentId: data.id })
@@ -226,7 +240,9 @@ async function removeComment(data, ctx) {
       .catch(() => {})
   }
 
-  return { id: data.id, removed: res.stats.removed }
+  await incCounter(comment.targetType, comment.targetId, -(1 + cascadeCount))
+
+  return { id: data.id, removed: res.stats.removed, cascadeRemoved: cascadeCount }
 }
 
 const ACTIONS = {

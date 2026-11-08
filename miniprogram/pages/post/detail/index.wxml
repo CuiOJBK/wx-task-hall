@@ -28,7 +28,13 @@
       <text class="title">回复</text>
       <text class="muted">{{replies.length}} 条</text>
     </view>
-    <comment-list list="{{replies}}" empty-text="还没有回复" bind:reply="onReply" />
+    <comment-list
+      list="{{replies}}"
+      owner-openid="{{myOpenid}}"
+      empty-text="还没有回复"
+      bind:reply="onReply"
+      bind:remove="onRemoveComment"
+    />
   </view>
 
   <view class="bottom-space"></view>

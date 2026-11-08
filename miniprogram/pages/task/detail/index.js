@@ -15,7 +15,8 @@ Page({
     loading: true,
     sending: false,
     acting: false,
-    needLogin: false
+    needLogin: false,
+    myOpenid: ''
   },
 
   async onLoad(options) {
@@ -47,7 +48,7 @@ Page({
   },
 
   async loadAll() {
-    this.setData({ loading: true })
+    this.setData({ loading: true, myOpenid: getApp().globalData.openid || '' })
     try {
       const [detail, commentRes] = await Promise.all([
         taskService.getTask(this.data.id),
@@ -63,6 +64,33 @@ Page({
       showError(err, '加载失败')
     } finally {
       this.setData({ loading: false })
+    }
+  },
+
+  /** 长按删除自己的评论（主楼会连带删回复） */
+  async onRemoveComment(e) {
+    const { id } = e.detail || {}
+    if (!id) return
+    const confirmed = await new Promise((resolve) => {
+      wx.showModal({
+        title: '删除评论',
+        content: '删除后不可恢复，主楼下的回复会一并删除',
+        confirmText: '删除',
+        confirmColor: '#ff5a1f',
+        success: (r) => resolve(r.confirm),
+        fail: () => resolve(false)
+      })
+    })
+    if (!confirmed) return
+    wx.showLoading({ title: '删除中', mask: true })
+    try {
+      await commentService.removeComment(id)
+      wx.hideLoading()
+      wx.showToast({ title: '已删除', icon: 'success' })
+      await this.loadAll()
+    } catch (err) {
+      wx.hideLoading()
+      showError(err, '删除失败')
     }
   },
 

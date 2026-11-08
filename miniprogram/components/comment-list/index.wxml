@@ -1,7 +1,14 @@
 <view class="comment-list">
   <view class="empty" wx:if="{{list.length === 0}}">{{emptyText}}</view>
 
-  <view class="comment-item" wx:for="{{list}}" wx:key="_id">
+  <view
+    class="comment-item"
+    wx:for="{{list}}"
+    wx:key="_id"
+    data-id="{{item._id}}"
+    data-own="{{item.openid === ownerOpenid ? 1 : 0}}"
+    bindlongpress="onLongPress"
+  >
     <view class="avatar">{{item.nicknameFirst || '匿'}}</view>
 
     <view class="body">
@@ -14,11 +21,25 @@
 
       <view class="actions">
         <text class="reply-btn" data-item="{{item}}" bindtap="onReply">回复</text>
+        <text
+          class="del-btn"
+          wx:if="{{item.openid === ownerOpenid}}"
+          data-id="{{item._id}}"
+          bindtap="onDeleteTap"
+        >删除</text>
       </view>
 
       <!-- 二级回复：只渲染一层，不递归，避免无限嵌套 -->
       <view class="children" wx:if="{{item.children.length > 0}}">
-        <view class="child" wx:for="{{item.children}}" wx:for-item="child" wx:key="_id">
+        <view
+          class="child"
+          wx:for="{{item.children}}"
+          wx:for-item="child"
+          wx:key="_id"
+          data-id="{{child._id}}"
+          data-own="{{child.openid === ownerOpenid ? 1 : 0}}"
+          bindlongpress="onLongPress"
+        >
           <text class="child-nick">{{child.nickname || '匿名用户'}}</text>
           <text class="child-content">{{child.content}}</text>
           <text class="muted child-time">{{child.timeText}}</text>

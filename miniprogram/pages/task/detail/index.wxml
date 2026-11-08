@@ -81,7 +81,12 @@
       <text class="title">评论</text>
       <text class="muted">{{comments.length}} 条</text>
     </view>
-    <comment-list list="{{comments}}" bind:reply="onReply" />
+    <comment-list
+      list="{{comments}}"
+      owner-openid="{{myOpenid}}"
+      bind:reply="onReply"
+      bind:remove="onRemoveComment"
+    />
   </view>
 
   <view class="bottom-space"></view>
