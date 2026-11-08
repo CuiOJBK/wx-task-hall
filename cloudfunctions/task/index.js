@@ -42,13 +42,7 @@ const ANON_LIMIT = 10
 /** 匿名可见字段白名单（规则 L4） */
 const ANON_TASK_FIELDS = ['_id', 'title', 'reward', 'status', 'commentCount', 'createdAt']
 
-const STATUS = {
-  PENDING: 'pending',
-  ACCEPTED: 'accepted',
-  CONFIRMING: 'confirming',
-  COMPLETED: 'completed',
-  CANCELLED: 'cancelled'
-}
+const { STATUS, evaluateTransition, haversine } = require('./state')
 
 const ok = (data) => ({ code: 0, data, msg: 'ok' })
 const fail = (code, msg) => ({ code, msg })
@@ -170,22 +164,6 @@ function pickAnonTask(task) {
 }
 
 /** 球面距离（米），用于没有建地理索引时的兜底排序 */
-function haversine(a, b) {
-  const R = 6371000
-  const rad = Math.PI / 180
-  const lat1 = Number(a.latitude)
-  const lng1 = Number(a.longitude)
-  const lat2 = Number(b.latitude)
-  const lng2 = Number(b.longitude)
-  if ([lat1, lng1, lat2, lng2].some((v) => Number.isNaN(v))) return null
-  const dLat = (lat2 - lat1) * rad
-  const dLng = (lng2 - lng1) * rad
-  const s =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLng / 2) ** 2
-  return Math.round(2 * R * Math.asin(Math.sqrt(s)))
-}
-
 function stripPrivate(task) {
   if (!task) return task
   const { contact, ...rest } = task
@@ -471,43 +449,39 @@ async function detailTask(data, ctx) {
  * 状态流转的统一实现
  * 依赖 `where({_id, status: from})` 的条件更新做乐观锁
  */
-async function transition({ id, ctx, from, to, field, requireOwner, requireTaker, preCheck }) {
+/**
+ * 执行状态流转：规则判定交给 state.js 的纯函数，这里只做数据库写入
+ * 条件更新 where({_id, status: from}) 保证并发下只有一个请求能成功
+ */
+async function transition({ action, id, ctx, field }) {
   await requireWriter(ctx)
   assert(id, 'INVALID_PARAM', '缺少任务 ID')
-  const task = await getTaskById(id)
-  assert(task, 'NOT_FOUND', '任务不存在或已删除')
 
-  if (preCheck) preCheck(task, ctx)
-  if (requireOwner) assert(task.ownerOpenid === ctx.openid, 'FORBIDDEN', '只有发布者可以操作')
-  if (requireTaker) assert(task.takerOpenid === ctx.openid, 'FORBIDDEN', '只有接单者可以操作')
-  assert(task.status === from, 'STATUS_CONFLICT', '任务当前状态不允许该操作')
+  const task = await getTaskById(id)
+  const verdict = evaluateTransition(action, task, ctx.openid)
+  assert(verdict.allowed, verdict.code, verdict.msg)
 
   const res = await db
     .collection(C_TASK)
-    .where({ _id: id, status: from })
+    .where({ _id: id, status: verdict.from })
     .update({
       data: {
-        status: to,
+        status: verdict.to,
         ...(field || {}),
         updatedAt: db.serverDate()
       }
     })
 
   assert(res.stats && res.stats.updated === 1, 'STATUS_CONFLICT', '手慢了，任务状态已被改变')
-  return { id, status: to }
+  return { id, status: verdict.to }
 }
 
 async function grabTask(data, ctx) {
   const result = await transition({
+    action: 'grab',
     id: data.id,
     ctx,
-    from: STATUS.PENDING,
-    to: STATUS.ACCEPTED,
-    field: { takerOpenid: ctx.openid, takenAt: db.serverDate() },
-    requireOwner: false,
-    requireTaker: false,
-    preCheck: (task) =>
-      assert(task.ownerOpenid !== ctx.openid, 'SELF_GRAB', '不能接自己发布的任务')
+    field: { takerOpenid: ctx.openid, takenAt: db.serverDate() }
   })
 
   db.collection(C_USER)
@@ -530,39 +504,33 @@ async function submitTask(data, ctx) {
   })
 
   return transition({
+    action: 'submit',
     id: data.id,
     ctx,
-    from: STATUS.ACCEPTED,
-    to: STATUS.CONFIRMING,
     field: {
       submittedAt: db.serverDate(),
       proofImages,
       proofTraceIds
-    },
-    requireTaker: true
+    }
   })
 }
 
 async function confirmTask(data, ctx) {
   // 发布者确认完成
   return transition({
+    action: 'confirm',
     id: data.id,
     ctx,
-    from: STATUS.CONFIRMING,
-    to: STATUS.COMPLETED,
-    field: { completedAt: db.serverDate() },
-    requireOwner: true
+    field: { completedAt: db.serverDate() }
   })
 }
 
 async function cancelTask(data, ctx) {
   return transition({
+    action: 'cancel',
     id: data.id,
     ctx,
-    from: STATUS.PENDING,
-    to: STATUS.CANCELLED,
-    field: { cancelledAt: db.serverDate() },
-    requireOwner: true
+    field: { cancelledAt: db.serverDate() }
   })
 }
 

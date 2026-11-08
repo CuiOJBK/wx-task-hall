@@ -60,7 +60,7 @@
 |---|---|---|
 | D-1 | 集合名、状态枚举在前端 `utils/constants.js` 和 5 个云函数里各写一份 | 抽一个 `shared/` 目录，用构建脚本同步进各云函数（云函数无法直接 require 上级目录） |
 | D-2 | 云函数的 `addWithColl` / `safeGet` / `bizError` 是复制粘贴的 | 同上，或发布成私有 npm 包 |
-| D-3 | 纯逻辑单测已有 76 条（emoji/键盘/地址/昵称），但**核心业务无覆盖**：`transition` 状态机、`haversine`、评论层级校验都没测 | 把这几个抽成纯函数模块，补测试；状态机是最该测的（错了会写脏数据） |
+| D-3 | **✅ 已完成**：状态机与距离计算抽到 `cloudfunctions/task/state.js`（纯函数），`transition` 只负责条件更新；`scripts/test-state.js` 22 条覆盖流转/身份/状态冲突/终态/异常入参/距离 | **顺带修了真 bug**：`Number(null)=0` 让缺失坐标算成 110km，已改为严格判空。评论层级校验仍未测（`comment.add` 的 parentId 校验） |
 | D-4 | 错误只 `console.error` | 接云开发日志告警或自建上报，至少把 `code !== 0` 的调用打点 |
 | D-5 | 页面无 loading 骨架，弱网体验差 | 抽 `loading` / `error` 通用组件 |
 | D-6 | ~~emoji 插入位置以「最后一次输入的光标」为准~~ | **已修（v0.2.1）**：改用 `wx.getSelectedTextRange()` 在输入框失焦前读真实选区，点文本中间再插表情也能精确落位 |
