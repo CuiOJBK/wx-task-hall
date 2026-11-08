@@ -7,6 +7,54 @@
   border-bottom: none;
 }
 
+.img-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.img-item {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  margin: 0 16rpx 16rpx 0;
+  border-radius: 12rpx;
+  overflow: hidden;
+  background: #f5f6f8;
+}
+
+.img-thumb {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.img-del {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 36rpx;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  font-size: 28rpx;
+  border-radius: 0 0 0 12rpx;
+}
+
+.img-add {
+  width: 160rpx;
+  height: 160rpx;
+  border: 2rpx dashed #d4d8de;
+  border-radius: 12rpx;
+  color: #b0b5bd;
+  font-size: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16rpx;
+}
+
 .hint {
   font-size: 22rpx;
   color: #9aa0a8;

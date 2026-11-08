@@ -24,6 +24,20 @@
     <view class="divider"></view>
     <text class="desc detail-desc">{{task.descText}}</text>
 
+    <!-- 任务配图 -->
+    <view class="img-grid" wx:if="{{task.images.length}}">
+      <image
+        class="img-thumb"
+        wx:for="{{task.images}}"
+        wx:key="*this"
+        src="{{item}}"
+        mode="aspectFill"
+        data-group="task"
+        data-index="{{index}}"
+        bindtap="onPreviewImages"
+      />
+    </view>
+
     <view class="info-row" wx:if="{{task.location}}" bindtap="onPreviewLocation">
       <text class="info-label">任务地点</text>
       <text class="info-value link">📍 {{task.locationText}}</text>
@@ -37,6 +51,23 @@
     <view class="info-row">
       <text class="info-label">评论</text>
       <text class="info-value">{{task.commentCount || 0}} 条</text>
+    </view>
+
+    <!-- 完成凭证 -->
+    <view class="proof" wx:if="{{task.proofImages.length}}">
+      <text class="info-label">完成凭证</text>
+      <view class="img-grid proof-grid">
+        <image
+          class="img-thumb"
+          wx:for="{{task.proofImages}}"
+          wx:key="*this"
+          src="{{item}}"
+          mode="aspectFill"
+          data-group="proof"
+          data-index="{{index}}"
+          bindtap="onPreviewImages"
+        />
+      </view>
     </view>
   </view>
 

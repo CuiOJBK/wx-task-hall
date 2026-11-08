@@ -3,6 +3,7 @@ const { showError } = require('../../../utils/ui')
 const commentService = require('../../../services/comment')
 const { COMMENT_TARGET } = require('../../../utils/constants')
 const { loginDirect } = require('../../../utils/auth')
+const { chooseImages, uploadImages } = require('../../../utils/upload')
 
 Page({
   data: {
@@ -179,8 +180,67 @@ Page({
     this.doAction('grabTask', '接单后需要按约定完成任务，确定接吗？', '接单成功')
   },
 
+  /** 提交完成：可直接提交，或先传最多 3 张凭证图 */
   onSubmitWork() {
-    this.doAction('submitTask', '提交后等待发布者确认，确定已按要求完成？', '已提交')
+    if (this.data.acting) return
+
+    wx.showActionSheet({
+      itemList: ['直接提交', '上传凭证图后提交'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          this.doAction('submitTask', '提交后等待发布者确认，确定已按要求完成？', '已提交')
+        } else {
+          this.pickProofAndSubmit()
+        }
+      },
+      fail: () => {}
+    })
+  },
+
+  async pickProofAndSubmit() {
+    let tempPaths = []
+    try {
+      tempPaths = await chooseImages(0)
+    } catch (e) {
+      showError(e, '选择图片失败')
+      return
+    }
+    if (!tempPaths.length) return
+
+    const confirmed = await new Promise((resolve) => {
+      wx.showModal({
+        title: '确认提交',
+        content: `将上传 ${tempPaths.length} 张凭证图，提交后等待发布者确认。`,
+        confirmText: '提交',
+        success: (r) => resolve(r.confirm),
+        fail: () => resolve(false)
+      })
+    })
+    if (!confirmed) return
+
+    this.setData({ acting: true })
+    wx.showLoading({ title: '上传中', mask: true })
+    try {
+      const proofImages = await uploadImages(tempPaths, 'proofs')
+      await taskService.submitTask(this.data.id, proofImages)
+      wx.hideLoading()
+      wx.showToast({ title: '已提交', icon: 'success' })
+      await this.loadAll()
+    } catch (err) {
+      wx.hideLoading()
+      showError(err, '提交失败')
+    } finally {
+      this.setData({ acting: false })
+    }
+  },
+
+  /** 预览任务配图 / 凭证图 */
+  onPreviewImages(e) {
+    const { group, index } = e.currentTarget.dataset
+    const task = this.data.task || {}
+    const urls = group === 'proof' ? task.proofImages || [] : task.images || []
+    if (!urls.length) return
+    wx.previewImage({ current: urls[Number(index)] || urls[0], urls })
   },
 
   onConfirm() {

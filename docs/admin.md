@@ -113,6 +113,8 @@
 |---|---|
 | `operatorOpenid` / `operatorLevel` | 操作人与等级 |
 | `action` | `user.create` / `user.update` / `user.setStatus` / `user.delete` / `content.remove` / `role.update` / `settings.save` / `report.resolve` / `report.ignore` / `report.remove` |
+
+> 图片审核结果独立记录在 `image_checks` 集合（traceId / fileID / status / result），不进操作日志。
 | `targetType` / `targetId` | 目标对象 |
 | `detail` | JSON 摘要，截断 500 字符 |
 | `createdAt` | 服务端时间 |

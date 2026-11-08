@@ -25,6 +25,23 @@
     </view>
 
     <view class="field">
+      <text class="label">图片<text class="hint">选填，最多 {{maxImages}} 张</text></text>
+      <view class="img-grid">
+        <view class="img-item" wx:for="{{images}}" wx:key="*this">
+          <image
+            class="img-thumb"
+            src="{{item}}"
+            mode="aspectFill"
+            data-index="{{index}}"
+            bindtap="onPreviewImage"
+          />
+          <view class="img-del" data-index="{{index}}" catchtap="onRemoveImage">×</view>
+        </view>
+        <view class="img-add" wx:if="{{images.length < maxImages}}" bindtap="onChooseImage">＋</view>
+      </view>
+    </view>
+
+    <view class="field">
       <text class="label">赏金（元）<text class="hint">上限 {{platform.maxReward}} 元</text></text>
       <input
         class="input"

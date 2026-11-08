@@ -3,6 +3,7 @@ const { showError } = require('../../../utils/ui')
 const locationUtil = require('../../../utils/location')
 const config = require('../../../config/index')
 const { ensureAuthorized, ensureProfile } = require('../../../utils/auth')
+const { MAX_IMAGES, chooseImages, uploadImages } = require('../../../utils/upload')
 
 Page({
   data: {
@@ -15,7 +16,10 @@ Page({
     submitting: false,
     mapEnabled: config.features.mapPicker,
     // 平台设置：赏金上限 / 是否允许发布 / 公告
-    platform: { maxReward: 500, allowPublish: true, announcement: '' }
+    platform: { maxReward: 500, allowPublish: true, announcement: '' },
+    // 最多 3 张，上传前是本地临时路径
+    images: [],
+    maxImages: MAX_IMAGES
   },
 
   async onLoad() {
@@ -53,6 +57,29 @@ Page({
       // 设置读取失败不阻断发布，服务端仍会兜底校验
       console.warn('[publish] 读取平台设置失败', e.message)
     }
+  },
+
+  /** 选图（本地暂存，提交时统一上传） */
+  async onChooseImage() {
+    try {
+      const paths = await chooseImages(this.data.images.length)
+      if (!paths.length) return
+      this.setData({ images: this.data.images.concat(paths).slice(0, MAX_IMAGES) })
+    } catch (e) {
+      showError(e, '选择图片失败')
+    }
+  },
+
+  onRemoveImage(e) {
+    const index = Number(e.currentTarget.dataset.index)
+    const images = this.data.images.slice()
+    images.splice(index, 1)
+    this.setData({ images })
+  },
+
+  onPreviewImage(e) {
+    const index = Number(e.currentTarget.dataset.index)
+    wx.previewImage({ current: this.data.images[index], urls: this.data.images })
   },
 
   onInput(e) {
@@ -110,12 +137,21 @@ Page({
     wx.showLoading({ title: '发布中', mask: true })
     try {
       const { title, desc, reward, contact, location } = this.data
+
+      // 先传图，拿到 fileID 再落库；上传失败直接中止，避免出现「任务发了但没图」
+      let images = []
+      if (this.data.images.length) {
+        wx.showLoading({ title: '上传图片', mask: true })
+        images = await uploadImages(this.data.images, 'tasks')
+      }
+
       await taskService.createTask({
         title: title.trim(),
         desc: (desc || '').trim(),
         reward: Number(reward || 0),
         contact: (contact || '').trim(),
-        location
+        location,
+        images
       })
       wx.hideLoading()
       wx.showToast({ title: '发布成功', icon: 'success' })

@@ -18,6 +18,10 @@ const _ = db.command
 const C_TASK = 'tasks'
 const C_USER = 'users'
 const C_SETTING = 'settings'
+const C_IMAGE_CHECK = 'image_checks'
+
+/** 每处最多 3 张图（与前端 picker 上限一致） */
+const MAX_IMAGES = 3
 
 /** 平台默认设置，与后台 settings 默认值保持一致 */
 const DEFAULT_SETTINGS = { maxReward: 500, allowPublish: true, announcement: '' }
@@ -227,10 +231,13 @@ async function createTask(data, ctx) {
     geo = new db.Geo.Point(lng, lat)
   }
 
+  const images = normalizeImages(data.images)
+
   const now = db.serverDate()
   const doc = {
     title,
     desc,
+    images,
     reward,
     contact: (data.contact || '').trim().slice(0, 40),
     location,
@@ -247,13 +254,25 @@ async function createTask(data, ctx) {
 
   const r = await addWithColl(C_TASK, doc)
 
+  // 图片安全检测是异步接口：先落库再提交检测，traceId 由 mediacheck 回调匹配
+  if (images.length) {
+    const traceIds = await checkImages(images, ctx.openid, 3, { type: 'task', id: r._id })
+    if (traceIds.length) {
+      await db
+        .collection(C_TASK)
+        .doc(r._id)
+        .update({ data: { imageCheckTraceIds: traceIds } })
+        .catch((e) => console.warn('[task] 回写 traceId 失败', e.message))
+    }
+  }
+
   // 发布数 +1（失败不影响主流程）
   db.collection(C_USER)
     .where({ openid: ctx.openid })
     .update({ data: { publishedCount: _.inc(1) } })
     .catch(() => {})
 
-  return { id: r._id, status: STATUS.PENDING }
+  return { id: r._id, status: STATUS.PENDING, images }
 }
 
 /**
@@ -267,6 +286,66 @@ async function createTask(data, ctx) {
  * A6 返回字段按白名单裁剪
  * A7 hasMore 恒为 false
  */
+/** 规整图片数组：只接受 cloud:// fileID，去重并截断到 3 张 */
+function normalizeImages(list) {
+  if (!Array.isArray(list)) return []
+  const seen = {}
+  const out = []
+  for (const v of list) {
+    if (typeof v !== 'string' || v.indexOf('cloud://') !== 0) continue
+    if (seen[v]) continue
+    seen[v] = true
+    out.push(v)
+    if (out.length >= MAX_IMAGES) break
+  }
+  return out
+}
+
+/**
+ * 图片内容安全检测（mediaCheckAsync 是异步接口）
+ *
+ * 流程：fileID → 临时 URL → mediaCheckAsync → traceId
+ * traceId 与 fileID 的映射写入 image_checks，供 mediacheck 云函数回调匹配。
+ * 接口不可用（未开通/超配额）时放行并记日志，不阻断发布。
+ */
+async function checkImages(images, openid, scene, target) {
+  if (!images.length) return []
+  const traceIds = []
+  try {
+    const res = await cloud.getTempFileURL({ fileList: images })
+    const fileList = (res && res.fileList) || []
+    for (const f of fileList) {
+      if (!f || !f.tempFileURL) continue
+      try {
+        const check = await cloud.openapi.security.mediaCheckAsync({
+          mediaUrl: f.tempFileURL,
+          mediaType: 2,
+          version: 2,
+          openid,
+          scene: scene || 3
+        })
+        const traceId = check && check.traceId
+        if (!traceId) continue
+        traceIds.push(traceId)
+        await addWithColl(C_IMAGE_CHECK, {
+          traceId,
+          fileID: f.fileID,
+          openid,
+          status: 'pending',
+          targetType: (target && target.type) || '',
+          targetId: (target && target.id) || '',
+          createdAt: db.serverDate()
+        })
+      } catch (e) {
+        console.warn('[task] mediaCheckAsync 失败，本张放行：', (e && e.errMsg) || (e && e.message) || e)
+      }
+    }
+  } catch (e) {
+    console.warn('[task] 获取图片临时链接失败，本次放行：', (e && e.message) || e)
+  }
+  return traceIds
+}
+
 /**
  * 按距离分页（geoNear）
  *
@@ -440,13 +519,26 @@ async function grabTask(data, ctx) {
 }
 
 async function submitTask(data, ctx) {
-  // 接单者提交完成
+  // 接单者提交完成，可附最多 3 张凭证图
+  const proofImages = normalizeImages(data.proofImages)
+
+  // transition 内部还会再校验一次身份；这里先校验是为了不让未登录请求打到图片检测接口
+  await requireWriter(ctx)
+  const proofTraceIds = await checkImages(proofImages, ctx.openid, 3, {
+    type: 'task',
+    id: String(data.id || '')
+  })
+
   return transition({
     id: data.id,
     ctx,
     from: STATUS.ACCEPTED,
     to: STATUS.CONFIRMING,
-    field: { submittedAt: db.serverDate() },
+    field: {
+      submittedAt: db.serverDate(),
+      proofImages,
+      proofTraceIds
+    },
     requireTaker: true
   })
 }

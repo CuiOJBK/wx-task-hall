@@ -64,8 +64,8 @@ async function grabTask(id) {
   return res.data
 }
 
-async function submitTask(id) {
-  const res = await call('task', 'submit', { id })
+async function submitTask(id, proofImages) {
+  const res = await call('task', 'submit', { id, proofImages: proofImages || [] })
   return res.data
 }
 

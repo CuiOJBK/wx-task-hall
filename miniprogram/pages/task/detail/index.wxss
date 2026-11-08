@@ -145,3 +145,26 @@
 }
 
 /* 底部输入条与表情面板样式已抽到 components/comment-bar，本页不再维护 */
+
+/* 图片：任务配图与完成凭证共用 */
+.img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 16rpx;
+}
+
+.img-thumb {
+  width: 200rpx;
+  height: 200rpx;
+  margin: 0 12rpx 12rpx 0;
+  border-radius: 12rpx;
+  background: #f5f6f8;
+}
+
+.proof {
+  margin-top: 20rpx;
+}
+
+.proof-grid {
+  margin-top: 10rpx;
+}

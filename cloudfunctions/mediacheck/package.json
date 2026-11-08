@@ -1,0 +1,9 @@
+{
+  "name": "mediacheck",
+  "version": "1.0.0",
+  "description": "图片内容安全异步回调（消息推送 wxa_media_check）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
