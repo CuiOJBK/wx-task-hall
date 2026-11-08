@@ -78,6 +78,22 @@ Page({
     }
   },
 
+  /** 回复点赞后同步本地列表 */
+  onCommentLiked(e) {
+    const { id, liked, likeCount } = e.detail || {}
+    if (!id) return
+    const list = (this.data.replies || []).map((c) => {
+      if (c._id === id) return Object.assign({}, c, { liked, likeCount })
+      if (c.children && c.children.length) {
+        return Object.assign({}, c, {
+          children: c.children.map((ch) => (ch._id === id ? Object.assign({}, ch, { liked, likeCount }) : ch))
+        })
+      }
+      return c
+    })
+    this.setData({ replies: list })
+  },
+
   /** 举报话题 */
   onTapReport() {
     const post = this.data.post

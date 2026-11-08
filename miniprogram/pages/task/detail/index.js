@@ -90,6 +90,22 @@ Page({
     }
   },
 
+  /** 评论点赞后同步本地列表，避免整页重载 */
+  onCommentLiked(e) {
+    const { id, liked, likeCount } = e.detail || {}
+    if (!id) return
+    const list = (this.data.comments || []).map((c) => {
+      if (c._id === id) return Object.assign({}, c, { liked, likeCount })
+      if (c.children && c.children.length) {
+        return Object.assign({}, c, {
+          children: c.children.map((ch) => (ch._id === id ? Object.assign({}, ch, { liked, likeCount }) : ch))
+        })
+      }
+      return c
+    })
+    this.setData({ comments: list })
+  },
+
   /** 举报任务 */
   onTapReport() {
     const task = this.data.task

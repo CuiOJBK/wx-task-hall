@@ -45,6 +45,32 @@
   margin-top: 8rpx;
 }
 
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 32rpx;
+  padding: 4rpx 0;
+}
+
+.like-btn.small {
+  margin-left: 16rpx;
+}
+
+.like-icon {
+  font-size: 26rpx;
+  line-height: 1;
+}
+
+.like-num {
+  font-size: 22rpx;
+  color: #9aa0a8;
+  margin-left: 6rpx;
+}
+
+.like-btn.on .like-num {
+  color: #ff5a1f;
+}
+
 .report-btn {
   margin-left: 32rpx;
   font-size: 24rpx;

@@ -28,4 +28,10 @@ async function removeComment(id) {
   return res.data
 }
 
-module.exports = { listComments, addComment, removeComment, pageSize: config.pageSize }
+/** 点赞 / 取消点赞（切换），返回 { liked, likeCount } */
+async function toggleLike(id) {
+  const res = await call('comment', 'like', { id })
+  return res.data
+}
+
+module.exports = { listComments, addComment, removeComment, toggleLike, pageSize: config.pageSize }

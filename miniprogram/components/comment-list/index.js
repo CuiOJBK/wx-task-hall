@@ -1,3 +1,5 @@
+const commentService = require('../../services/comment')
+
 Component({
   properties: {
     list: {
@@ -18,6 +20,18 @@ Component({
     onReply(e) {
       const { item } = e.currentTarget.dataset
       this.triggerEvent('reply', { comment: item })
+    },
+
+    /** 点赞 / 取消：成功后抛事件，由页面更新列表数据 */
+    async onToggleLike(e) {
+      const { id } = e.currentTarget.dataset
+      if (!id) return
+      try {
+        const d = await commentService.toggleLike(id)
+        this.triggerEvent('liked', { id, liked: d.liked, likeCount: d.likeCount })
+      } catch (err) {
+        wx.showToast({ title: err.message || '操作失败', icon: 'none' })
+      }
     },
 
     /** 点「删除」文字（仅自己的主楼会渲染这个按钮） */

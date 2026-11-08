@@ -17,6 +17,7 @@ const db = cloud.database()
 const _ = db.command
 
 const C_COMMENT = 'comments'
+const C_LIKE = 'likes'
 const C_TASK = 'tasks'
 const C_POST = 'posts'
 const C_USER = 'users'
@@ -186,6 +187,7 @@ async function addComment(data, ctx) {
     replyToNickname: (data.replyToNickname || '').slice(0, 20),
     openid: ctx.openid,
     nickname,
+    likeCount: 0,
     createdAt: db.serverDate()
   }
 
@@ -239,8 +241,29 @@ async function listComments(data, ctx) {
     map[c.parentId].push(c)
   })
 
+  // 一次性查出当前用户对这批评论的点赞状态，避免 N+1
+  const allIds = [].concat(ids, children.map((c) => c._id))
+  const likes = allIds.length
+    ? await safeGet(
+        db
+          .collection(C_LIKE)
+          .where({ targetType: 'comment', openid: ctx.openid, targetId: _.in(allIds) })
+          .limit(1000),
+        []
+      )
+    : []
+  const likedSet = {}
+  likes.forEach((l) => {
+    likedSet[l.targetId] = true
+  })
+
+  const markLiked = (c) => ({ ...c, liked: !!likedSet[c._id], likeCount: c.likeCount || 0 })
+
   return {
-    list: pageMains.map((m) => ({ ...m, children: map[m._id] || [] })),
+    list: pageMains.map((m) => ({
+      ...markLiked(m),
+      children: (map[m._id] || []).map(markLiked)
+    })),
     hasMore
   }
 }
@@ -279,10 +302,49 @@ async function removeComment(data, ctx) {
   return { id: data.id, removed: res.stats.removed, cascadeRemoved: cascadeCount }
 }
 
+/** 评论点赞 / 取消（切换），与 post.like 同一套 likes 集合 */
+async function likeComment(data, ctx) {
+  await requireWriter(ctx)
+  assert(data.id, 'INVALID_PARAM', '缺少评论 ID')
+
+  const comment = await getDoc(C_COMMENT, data.id)
+  assert(comment, 'NOT_FOUND', '评论不存在或已删除')
+
+  const exists = await safeGet(
+    db
+      .collection(C_LIKE)
+      .where({ targetType: 'comment', targetId: data.id, openid: ctx.openid })
+      .limit(1),
+    []
+  )
+
+  const liked = exists.length === 0
+  if (liked) {
+    await addWithColl(C_LIKE, {
+      targetType: 'comment',
+      targetId: data.id,
+      openid: ctx.openid,
+      createdAt: db.serverDate()
+    })
+  } else {
+    await db.collection(C_LIKE).doc(exists[0]._id).remove()
+  }
+
+  await db
+    .collection(C_COMMENT)
+    .doc(data.id)
+    .update({ data: { likeCount: _.inc(liked ? 1 : -1) } })
+    .catch((e) => console.warn('[comment] 点赞计数更新失败', e.message))
+
+  const latest = await getDoc(C_COMMENT, data.id)
+  return { liked, likeCount: Math.max(0, (latest && latest.likeCount) || 0) }
+}
+
 const ACTIONS = {
   add: addComment,
   list: listComments,
-  remove: removeComment
+  remove: removeComment,
+  like: likeComment
 }
 
 exports.main = async (event = {}) => {

@@ -37,6 +37,7 @@
       bind:reply="onReply"
       bind:remove="onRemoveComment"
       bind:report="onReportComment"
+      bind:liked="onCommentLiked"
     />
   </view>
 

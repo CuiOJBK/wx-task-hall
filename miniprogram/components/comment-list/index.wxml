@@ -21,6 +21,10 @@
 
       <view class="actions">
         <text class="reply-btn" data-item="{{item}}" bindtap="onReply">回复</text>
+        <view class="like-btn {{item.liked ? 'on' : ''}}" data-id="{{item._id}}" catchtap="onToggleLike">
+          <text class="like-icon">{{item.liked ? '❤️' : '🤍'}}</text>
+          <text class="like-num">{{item.likeCount || 0}}</text>
+        </view>
         <text
           class="del-btn"
           wx:if="{{item.openid === ownerOpenid}}"
@@ -49,6 +53,10 @@
           <text class="child-nick">{{child.nickname || '匿名用户'}}</text>
           <text class="child-content">{{child.content}}</text>
           <text class="muted child-time">{{child.timeText}}</text>
+          <view class="like-btn small {{child.liked ? 'on' : ''}}" data-id="{{child._id}}" catchtap="onToggleLike">
+            <text class="like-icon">{{child.liked ? '❤️' : '🤍'}}</text>
+            <text class="like-num">{{child.likeCount || 0}}</text>
+          </view>
         </view>
       </view>
     </view>
