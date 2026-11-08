@@ -1,0 +1,63 @@
+.sk {
+  padding-top: 4rpx;
+}
+
+.sk-card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 26rpx 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.sk-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+}
+
+.sk-line {
+  height: 26rpx;
+  border-radius: 8rpx;
+  background: #eef0f3;
+  margin-bottom: 16rpx;
+  animation: sk-pulse 1.4s ease-in-out infinite;
+}
+
+.sk-line:last-child {
+  margin-bottom: 0;
+}
+
+.sk-line.title {
+  width: 42%;
+  height: 32rpx;
+  margin-bottom: 0;
+}
+
+.sk-line.w90 {
+  width: 90%;
+}
+
+.sk-line.w50 {
+  width: 50%;
+}
+
+.sk-chip {
+  width: 96rpx;
+  height: 32rpx;
+  border-radius: 8rpx;
+  background: #eef0f3;
+  animation: sk-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes sk-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 1;
+  }
+}

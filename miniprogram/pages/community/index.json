@@ -1,5 +1,7 @@
 {
   "navigationBarTitleText": "大厅交流",
   "enablePullDownRefresh": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "list-skeleton": "/components/list-skeleton/index"
+  }
 }

@@ -3,6 +3,7 @@
   "enablePullDownRefresh": true,
   "usingComponents": {
     "task-card": "/components/task-card/index",
-    "privacy-popup": "/components/privacy-popup/index"
+    "privacy-popup": "/components/privacy-popup/index",
+    "list-skeleton": "/components/list-skeleton/index"
   }
 }

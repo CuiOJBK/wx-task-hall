@@ -52,7 +52,8 @@
   <view class="empty" wx:if="{{!loading && list.length === 0}}">
     这里还没有任务，点右下角发布一个
   </view>
-  <view class="empty" wx:if="{{loading}}">加载中…</view>
+  <list-skeleton show="{{loading && list.length === 0}}" count="4" />
+  <view class="empty" wx:if="{{loading && list.length > 0}}">加载中…</view>
   <view class="login-more" wx:if="{{anonymous && list.length > 0}}" bindtap="onLoginTap">
     登录后可查看全部任务与详情 ›
   </view>

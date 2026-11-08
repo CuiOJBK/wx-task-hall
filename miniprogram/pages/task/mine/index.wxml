@@ -35,7 +35,8 @@
     <view class="empty" wx:if="{{!loading && list.length === 0}}">
       {{filter === 'all' ? (role === 'owner' ? '你还没有发布过任务' : '你还没有接过任务') : '该状态下没有任务'}}
     </view>
-    <view class="empty" wx:if="{{loading}}">加载中…</view>
+    <list-skeleton show="{{loading && list.length === 0}}" count="3" />
+    <view class="empty" wx:if="{{loading && list.length > 0}}">加载中…</view>
     <view class="empty" wx:if="{{finished && list.length > 0}}">没有更多了</view>
   </block>
 </view>

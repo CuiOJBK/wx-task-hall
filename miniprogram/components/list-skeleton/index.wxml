@@ -1,0 +1,10 @@
+<view class="sk" wx:if="{{show}}">
+  <view class="sk-card" wx:for="{{rows}}" wx:key="*this">
+    <view class="sk-row">
+      <view class="sk-line title"></view>
+      <view class="sk-chip"></view>
+    </view>
+    <view class="sk-line w90"></view>
+    <view class="sk-line w50"></view>
+  </view>
+</view>

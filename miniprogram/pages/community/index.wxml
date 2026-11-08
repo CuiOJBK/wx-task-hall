@@ -39,7 +39,8 @@
     </view>
 
     <view class="empty" wx:if="{{!loading && list.length === 0}}">还没有人发言，来开个头</view>
-    <view class="empty" wx:if="{{loading}}">加载中…</view>
+    <list-skeleton show="{{loading && list.length === 0}}" count="4" />
+    <view class="empty" wx:if="{{loading && list.length > 0}}">加载中…</view>
     <view class="empty" wx:if="{{finished && list.length > 0}}">没有更多了</view>
 
     <view class="fab" bindtap="onCreate">＋</view>
